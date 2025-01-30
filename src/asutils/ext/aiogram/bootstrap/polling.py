@@ -2,13 +2,17 @@ import asyncio
 import functools
 import logging
 from asyncio import AbstractEventLoop, CancelledError, Task, get_running_loop
+from collections.abc import Callable
 from contextvars import Context
 from typing import Any, Awaitable, Dict, List, Optional
 
+from asutils.func import func_call
 from asutils.logging import default_logger
 
 try:
     from aiogram import Bot
+    from aiogram.types import BotCommand
+    from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
     from aiogram.dispatcher.dispatcher import DEFAULT_BACKOFF_CONFIG, Dispatcher
     from aiogram.types import User
     from aiogram.utils.backoff import BackoffConfig
@@ -129,3 +133,30 @@ class PollingManager:
         """Stop all polling tasks"""
         for task in self.polling_tasks.values():
             task.cancel()
+
+
+FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
+SuccessCallable = Callable[[Bot], Any | Awaitable[Any]]
+
+
+def _default_on_failure(bot: Bot, error: TelegramAPIError):
+    default_logger.error(f"couldn't start bot {bot.id}: {error}")
+
+
+async def setup_polling(
+    bot: Bot,
+    commands: list[BotCommand],
+    on_failure: Optional[FailureCallable] = _default_on_failure,
+    on_success: Optional[SuccessCallable] = None,
+):
+    """Prepare bot for running by polling"""
+    try:
+        await asyncio.wait_for(bot.set_my_commands(commands), 3)
+    except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
+        return await func_call(on_failure, bot, exc)
+
+    await bot.delete_webhook()
+    await bot.get_updates(offset=-1)
+
+    if on_success:
+        await func_call(on_success, bot)
