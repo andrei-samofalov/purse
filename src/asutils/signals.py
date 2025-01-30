@@ -1,17 +1,24 @@
 import asyncio
+import inspect
 import signal
 from collections.abc import Callable
 from logging import getLogger
-from typing import Optional
+from typing import Optional, TypeAlias, Awaitable
 
 prepare_shutdown = asyncio.Event()
 """Use this event in your code."""
 
 logger = getLogger('asutils.signals')
-HandleShutdownCallable = Callable[[signal.Signals, asyncio.Event], None]
+HandleShutdownCallable: TypeAlias = Callable[
+    [signal.Signals, asyncio.Event],
+    object | Awaitable[object]
+]
 
 
-def _default_handle_shutdown(sig: signal.Signals, kill_event: asyncio.Event) -> None:
+def _default_handle_shutdown(
+    sig: signal.Signals,
+    kill_event: asyncio.Event,
+) -> None:
     """Handle shutdown."""
     prepare_shutdown.set()
     logger.info(f"Received {sig.name}, starting shutdown...")
@@ -24,11 +31,16 @@ def create_listeners(handle_shutdown: HandleShutdownCallable):
     kill_event = asyncio.Event()
 
     for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(
-            sig,
-            handle_shutdown,
-            sig, kill_event
-        )
+        if inspect.iscoroutinefunction(handle_shutdown):
+            cb = lambda *_: asyncio.create_task(
+                handle_shutdown(sig, kill_event)
+            )
+            args = tuple()
+        else:
+            cb = handle_shutdown
+            args = sig, kill_event
+
+        loop.add_signal_handler(sig, cb, *args)
 
     return kill_event
 
