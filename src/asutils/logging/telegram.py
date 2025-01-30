@@ -200,7 +200,7 @@ def configure_bot_exception_hook(tg_handler: TelegramHandler):
 
         with io.StringIO() as sio:
             traceback.print_exception(exc_type, exc_value, exc_traceback, -1, sio)
-            return sio.read()
+        return sio.read()
 
     def _bot_hook(exc_type, exc_value, exc_traceback):
         text = format_exception(exc_type, exc_value, exc_traceback)
