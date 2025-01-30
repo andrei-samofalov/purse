@@ -12,6 +12,7 @@ except ImportError:
 try:
     from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
     from aiogram import Bot, Dispatcher
+    from aiogram.types import User
     from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 except ImportError:
     raise ImportError('aiogram is not installed.')
@@ -19,7 +20,7 @@ except ImportError:
 import logging
 
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
-SuccessCallable = Callable[[Bot], Any | Awaitable[Any]]
+SuccessCallable = Callable[[Bot, User], Any | Awaitable[Any]]
 
 
 def _default_on_failure(bot: Bot, error: TelegramAPIError):
@@ -67,6 +68,6 @@ async def setup_webhook(
     logger.info(log_msg)
 
     if on_success is not None:
-        await func_call(on_success, bot)
+        await func_call(on_success, *(bot, me))
 
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=bot_hook)
