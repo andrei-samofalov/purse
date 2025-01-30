@@ -1,0 +1,16 @@
+[project]
+name = "as_utils"
+version = "0.1.0"
+description = "Andrei Samofalov's utils"
+requires-python = ">=3.11"
+dependencies = [
+
+]
+
+[project.optional-dependencies]
+aiogram = [
+    "aiogram>=3.17.0",
+]
+aiohttp = [
+    "aiohttp",
+]
