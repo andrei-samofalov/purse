@@ -126,5 +126,6 @@ class PollingManager:
         polling_task.cancel()
 
     def stop_all(self):
+        """Stop all polling tasks"""
         for task in self.polling_tasks.values():
             task.cancel()
