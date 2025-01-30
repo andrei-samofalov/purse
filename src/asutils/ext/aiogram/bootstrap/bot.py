@@ -1,6 +1,8 @@
+import contextlib
 from typing import Optional, Iterable
 
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.session.base import BaseSession
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.base import BaseStorage
@@ -46,3 +48,10 @@ def get_bot(
         session=session,
         default=DefaultBotProperties(parse_mode=parse_mode),
     )
+
+
+@contextlib.asynccontextmanager
+async def bot_context(token: str, parse_mode: Optional[ParseMode] = ParseMode.HTML):
+    """Async context manager for aiogram.Bot."""
+    async with AiohttpSession() as session:
+        yield get_bot(token, session=session, parse_mode=parse_mode)
