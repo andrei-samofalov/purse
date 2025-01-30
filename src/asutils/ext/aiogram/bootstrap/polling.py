@@ -136,7 +136,7 @@ class PollingManager:
 
 
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
-SuccessCallable = Callable[[Bot], Any | Awaitable[Any]]
+SuccessCallable = Callable[[Bot, User], Any | Awaitable[Any]]
 
 
 def _default_on_failure(bot: Bot, error: TelegramAPIError):
@@ -151,6 +151,7 @@ async def setup_polling(
 ):
     """Prepare bot for running by polling"""
     try:
+        me = await bot.get_me()
         await asyncio.wait_for(bot.set_my_commands(commands), 3)
     except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
         return await func_call(on_failure, bot, exc)
@@ -159,4 +160,4 @@ async def setup_polling(
     await bot.get_updates(offset=-1)
 
     if on_success:
-        await func_call(on_success, bot)
+        await func_call(on_success, *(bot, me))
