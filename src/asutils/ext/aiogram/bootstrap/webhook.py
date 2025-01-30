@@ -1,4 +1,4 @@
-from asutils.logger import default_logger
+from asutils.logging import default_logger
 
 try:
     from aiohttp import web

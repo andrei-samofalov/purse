@@ -1,8 +1,10 @@
 import logging
-from logging.config import dictConfig
-from typing import Optional, Iterable
+from collections.abc import Callable
+from typing import Optional
 
-default_logger = logging.getLogger('asutils')
+from asutils.logging import telegram as tg_base
+
+TelegramHandlerProvider = Callable[[], tg_base.TelegramHandler]
 
 DEFAULT_CONFIG = {
     'version': 1,
@@ -36,26 +38,36 @@ DEFAULT_CONFIG = {
         'aiohttp.access': {
             'level': 'WARNING',
         },
+        'httpcore': {
+            'level': 'WARNING',
+        },
     }
 }
-_empty_iterable = frozenset()
+
+TELEGRAM_CONF = {
+    'level': 'ERROR',
+    'formatter': 'console',
+    '()': TelegramHandlerProvider,
+}
 
 
-def make_config_dict(log_level: int | str) -> dict:
+def make_config_dict(
+    log_level: int | str = logging.DEBUG,
+    enable_telegram: bool = True,
+    telegram_handler_provider: Optional[TelegramHandlerProvider] = None,
+) -> dict:
     """Make default config with provided log level"""
     conf = DEFAULT_CONFIG.copy()
+
+    if enable_telegram:
+        telegram_conf = TELEGRAM_CONF.copy()
+        telegram_conf["()"] = telegram_handler_provider
+        conf['handlers']['telegram'] = telegram_conf
+        conf['loggers']['']['handlers'].append('telegram')
+
+        tg_base.configure_bot_exception_hook(
+            telegram_handler_provider()
+        )
+
     conf['loggers']['']['level'] = logging.getLevelName(log_level)
-    return DEFAULT_CONFIG
-
-
-def setup_logging(
-    config_dict: Optional[dict] = None,
-    *,
-    mute_loggers: Iterable[str] = _empty_iterable,
-) -> None:
-    """Setup logging configuration"""
-    config_dict = config_dict or make_config_dict(log_level=logging.INFO)
-    for logger_name in mute_loggers:
-        config_dict['loggers'].setdefault(logger_name, {})['level'] = "WARNING"
-
-    dictConfig(config=config_dict)
+    return conf

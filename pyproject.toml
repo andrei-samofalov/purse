@@ -4,7 +4,6 @@ version = "0.1.1"
 description = "Andrei Samofalov's utils"
 requires-python = ">=3.11"
 dependencies = [
-
 ]
 
 [project.optional-dependencies]
@@ -13,4 +12,11 @@ aiogram = [
 ]
 aiohttp = [
     "aiohttp",
+]
+
+[dependency-groups]
+dev = [
+    "aiogram>=3.17.0",
+    "httpx>=0.28.1",
+    "requests>=2.32.3",
 ]

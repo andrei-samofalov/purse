@@ -1,3 +1,6 @@
+import typing as t
+
+
 class CleanSet(set):
     """Set that ignores None"""
 
@@ -9,3 +12,11 @@ class CleanSet(set):
         """Add an element if it is not None"""
         if __element is not None:
             super().add(__element)
+
+
+@t.runtime_checkable
+class _O(t.Protocol):
+    pass
+
+
+ProtocolType = type(_O)

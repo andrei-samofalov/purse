@@ -7,6 +7,8 @@ from typing import Optional, TypeAlias, Awaitable
 
 prepare_shutdown = asyncio.Event()
 """Use this event in your code."""
+shutdown_complete = asyncio.Event()
+"""Use this event in your code."""
 
 logger = getLogger('asutils.signals')
 HandleShutdownCallable: TypeAlias = Callable[

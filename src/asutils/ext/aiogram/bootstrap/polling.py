@@ -5,7 +5,7 @@ from asyncio import AbstractEventLoop, CancelledError, Task, get_running_loop
 from contextvars import Context
 from typing import Any, Awaitable, Dict, List, Optional
 
-from asutils.logger import default_logger
+from asutils.logging import default_logger
 
 try:
     from aiogram import Bot
