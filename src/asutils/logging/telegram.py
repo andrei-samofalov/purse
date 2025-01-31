@@ -8,6 +8,7 @@ from typing import Generator, Optional, Any, Protocol
 
 from asutils import system, datetime as dt
 from asutils.http.clients import get_default_http_client
+from asutils.signals import prepare_shutdown
 
 LAST_SENT = None
 ChatId = int | str
@@ -48,6 +49,11 @@ class SimpleLoggingBot(BotProtocol):
         )
 
 
+class StopEvent(Protocol):
+
+    def is_set(self) -> bool: ...
+
+
 class TelegramLogger(logging.Logger):
     """Telegram adapted logger"""
 
@@ -57,17 +63,19 @@ class TelegramLogger(logging.Logger):
         dev_chat_id: Optional[ChatId] = None,
         name: str = 'asutils',
         level=logging.INFO,
+        stop_event: Optional[StopEvent] = prepare_shutdown
     ):
         super().__init__(name, level)
 
         self.tg_handler = tg_handler
+        self._stop_event = stop_event
         self._dev_chat_id = dev_chat_id
         self._msg_queue = queue.Queue()
 
         self._started = False
 
     def _worker(self):
-        while True:
+        while not self._stop_event.is_set():
             print('waiting for message...')
             msg, chat_id = self._msg_queue.get()
             print('received message: {}'.format(msg))
