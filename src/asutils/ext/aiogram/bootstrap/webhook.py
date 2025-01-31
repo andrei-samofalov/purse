@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import Callable, Awaitable
 from typing import Any, Optional
 
@@ -12,7 +13,7 @@ except ImportError:
 try:
     from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
     from aiogram import Bot, Dispatcher
-    from aiogram.types import User
+    from aiogram.types import User, BotCommand
     from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 except ImportError:
     raise ImportError('aiogram is not installed.')
@@ -32,7 +33,8 @@ async def setup_webhook(
     bot: Bot,
     dp: Dispatcher,
     web_domain: str,
-    bot_hook: str = '/bot',
+    bot_hook: str,
+    commands: list[BotCommand],
     on_failure: Optional[FailureCallable] = _default_on_failure,
     on_success: Optional[SuccessCallable] = None,
     logger: logging.Logger = default_logger,
@@ -40,7 +42,8 @@ async def setup_webhook(
     """Configure bot webhook."""
     try:
         me = await bot.get_me()
-    except TelegramUnauthorizedError as exc:
+        await asyncio.wait_for(bot.set_my_commands(commands), 3)
+    except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
         return await func_call(on_failure, *(bot, exc))
 
     if not bot_hook.startswith('/'):
