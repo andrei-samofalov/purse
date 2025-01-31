@@ -3,6 +3,8 @@ from collections.abc import Callable, Awaitable
 from logging import getLogger, Logger
 from typing import Optional, Any
 
+from asutils.func import func_call
+
 try:
     from aiogram import Router, Bot
     from aiogram import F
@@ -20,8 +22,9 @@ except ImportError:
 _logger = getLogger("bot.errors")
 
 CodeFormatCallable = Callable[[Any], str]
+ContextData = dict[str, Any]
 HandleForbiddenCallable = Callable[[ErrorEvent], Awaitable[None]]
-ExtractContextCallable = Callable[[ErrorEvent], Awaitable[dict[str, Any]]]
+ExtractContextCallable = Callable[[ErrorEvent], ContextData | Awaitable[ContextData]]
 
 
 def make_error_router(
@@ -93,7 +96,7 @@ def make_error_router(
         exc = code_fn(exception.exception)
         send_msg_to_dev = functools.partial(bot.send_message, chat_id=dev_chat_id)
 
-        ctx = {} if not extract_context_fn else await extract_context_fn(exception)
+        ctx = {} if not extract_context_fn else await func_call(extract_context_fn, exception)
         ctx_text = "\n".join([f"{ctx_key}: {ctx_val}" for ctx_key, ctx_val in ctx.items()])
 
         if event_type == UpdateType.CALLBACK_QUERY:
