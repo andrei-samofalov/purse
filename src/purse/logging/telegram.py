@@ -6,9 +6,9 @@ from datetime import timedelta
 from threading import Thread
 from typing import Generator, Optional, Any, Protocol
 
-from asutils import system, datetime as dt
-from asutils.http.clients import get_default_http_client
-from asutils.signals import prepare_shutdown
+from purse import system, datetime as dt
+from purse.http.clients import get_default_http_client
+from purse.signals import prepare_shutdown
 
 LAST_SENT = None
 ChatId = int | str

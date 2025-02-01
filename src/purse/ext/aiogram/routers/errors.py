@@ -3,7 +3,7 @@ from collections.abc import Callable, Awaitable
 from logging import getLogger, Logger
 from typing import Optional, Any
 
-from asutils.func import func_call
+from purse.func import func_call
 
 try:
     from aiogram import Router, Bot
@@ -90,6 +90,7 @@ def make_error_router(
     async def error_handler(exception: ErrorEvent):
         """Send errors to developer"""
         if print_exception:
+            print(f'an error occurred in telegram context')
             print(exception.model_dump_json(indent=2, exclude_none=True, exclude={"exception"}))
 
         event_type = exception.update.event_type

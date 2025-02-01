@@ -1,5 +1,5 @@
-from asutils import imports
-from asutils.http.clients import BaseClient
+from purse import imports
+from purse.http.clients import BaseClient
 
 imports.ensure_installed('requests')
 

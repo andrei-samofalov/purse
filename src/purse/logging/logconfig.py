@@ -2,7 +2,7 @@ import logging
 from collections.abc import Callable
 from typing import Optional
 
-from asutils.logging import telegram as tg_base
+from purse.logging import telegram as tg_base
 
 TelegramHandlerProvider = Callable[[], tg_base.TelegramHandler]
 

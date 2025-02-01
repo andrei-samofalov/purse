@@ -1,7 +1,7 @@
 import asyncio
 
-from asutils import logging
-from asutils import signals
+from purse import logging
+from purse import signals
 
 
 logger = logging.default_logger

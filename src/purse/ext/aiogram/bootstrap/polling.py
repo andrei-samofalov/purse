@@ -6,8 +6,8 @@ from collections.abc import Callable
 from contextvars import Context
 from typing import Any, Awaitable, Dict, List, Optional
 
-from asutils.func import func_call
-from asutils.logging import default_logger
+from purse.func import func_call
+from purse.logging import default_logger
 
 try:
     from aiogram import Bot

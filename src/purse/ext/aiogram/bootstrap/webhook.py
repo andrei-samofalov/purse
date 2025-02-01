@@ -2,8 +2,8 @@ import asyncio
 from collections.abc import Callable, Awaitable
 from typing import Any, Optional
 
-from asutils.func import func_call
-from asutils.logging import default_logger
+from purse.func import func_call
+from purse.logging import default_logger
 
 try:
     from aiohttp import web

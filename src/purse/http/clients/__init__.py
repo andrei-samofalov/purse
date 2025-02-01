@@ -1,4 +1,4 @@
-from asutils.http.clients.base import BaseClient
+from purse.http.clients.base import BaseClient
 
 httpx_installed = True
 try:

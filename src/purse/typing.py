@@ -1,7 +1,7 @@
 import inspect
 from typing import Any
 
-from asutils.types import ProtocolType
+from purse.types import ProtocolType
 
 isfun = inspect.isfunction
 iscoro = inspect.iscoroutinefunction

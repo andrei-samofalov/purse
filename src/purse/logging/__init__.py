@@ -2,8 +2,8 @@ import logging
 from logging.config import dictConfig
 from typing import Optional, Iterable
 
-from asutils.logging.logconfig import TelegramHandlerProvider, make_config_dict
-from asutils.logging.telegram import TelegramHandler, SimpleLoggingBot
+from purse.logging.logconfig import TelegramHandlerProvider, make_config_dict
+from purse.logging.telegram import TelegramHandler, SimpleLoggingBot
 
 __all__ = [
     "TelegramHandler",

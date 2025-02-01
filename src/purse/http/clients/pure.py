@@ -3,7 +3,7 @@ import json
 from typing import Optional
 from urllib.parse import urlencode
 
-from asutils.http.clients.base import BaseClient
+from purse.http.clients.base import BaseClient
 
 
 class SimpleHttpClient(BaseClient):
