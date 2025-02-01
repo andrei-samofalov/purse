@@ -1,6 +1,6 @@
 [project]
 name = "python-purse"
-version = "1.0.0"
+version = "1.0.1"
 description = "utils and snippets for python projects"
 requires-python = ">=3.11"
 dependencies = [
