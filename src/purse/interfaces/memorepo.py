@@ -14,10 +14,8 @@ Model = t.TypeVar("Model", bound=DataClassProtocol)
 ExceptionMeta = type(Exception)
 
 
-class DoesNotExistExceptionProtocol(t.Protocol, metaclass=ExceptionMeta):
+class DoesNotExistExceptionProtocol(t.Protocol):
     """Protocol for DoesNotExist exceptions"""
-    model: type[Model]
-    object_id: PK
 
     def __init__(self, model: type[Model], object_id: PK) -> None: ...
 
@@ -171,11 +169,12 @@ class MemoryRepo(RepoProtocol[PK, Model], t.Generic[PK, Model]):
 
 def make_memory_repo(
     domain_model: type[Model],
-    does_not_exist: type[DoesNotExistExceptionProtocol],
+    domain_pk: PK,
+    does_not_exist: DoesNotExistExceptionProtocol,
     to_domain_fn: t.Callable[[dict], Model],
     filter_map: FilterMap = MappingProxyType(DEFAULT_FILTER_MAP),
 ):
-    return MemoryRepo(
+    return MemoryRepo[domain_pk, domain_model](
         domain_model=domain_model,
         does_not_exist=does_not_exist,
         to_domain_fn=to_domain_fn,
