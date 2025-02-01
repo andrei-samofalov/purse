@@ -167,3 +167,17 @@ class MemoryRepo(RepoProtocol[PK, Model], t.Generic[PK, Model]):
         """Mass update objects by given filters"""
         async for obj in self._filter(**filters):
             await self._do_update(obj, **updates)
+
+
+def make_memory_repo(
+    domain_model: type[Model],
+    does_not_exist: type[DoesNotExistExceptionProtocol],
+    to_domain_fn: t.Callable[[dict], Model],
+    filter_map: FilterMap = MappingProxyType(DEFAULT_FILTER_MAP),
+):
+    return MemoryRepo(
+        domain_model=domain_model,
+        does_not_exist=does_not_exist,
+        to_domain_fn=to_domain_fn,
+        filter_map=filter_map,
+    )
