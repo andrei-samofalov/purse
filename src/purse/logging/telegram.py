@@ -166,10 +166,9 @@ class TelegramHandler(logging.Handler):
 
         for text in _get_parts(text):
             now = dt.utcnow()
-            if LAST_SENT:
-                while now - LAST_SENT < timedelta(seconds=self._send_delay):
-                    print(f'waiting for delay seconds', flush=True)
-                    continue
+            if LAST_SENT and (elapsed := now - LAST_SENT) < timedelta(self._send_delay):
+                print(f'sleeping {elapsed.seconds} seconds')
+                time.sleep(elapsed.seconds)
 
             if is_python:
                 text = f'```python {self._service_text_prefix}\n\n {text}```'
