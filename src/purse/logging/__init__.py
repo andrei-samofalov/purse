@@ -3,7 +3,10 @@ from logging.config import dictConfig
 from typing import Optional, Iterable
 
 from purse.logging.logconfig import TelegramHandlerProvider, make_config_dict
-from purse.logging.telegram import TelegramHandler, SimpleLoggingBot
+from purse.logging.telegram import (
+    TelegramLogger,
+    TelegramHandler, SimpleLoggingBot, configure_bot_exception_hook
+)
 
 __all__ = [
     "TelegramHandler",
@@ -49,3 +52,11 @@ def setup(
         config_dict['loggers'].setdefault(logger_name, {})['level'] = "WARNING"
 
     dictConfig(config=config_dict)
+
+    if enable_telegram:
+        tg_handler = telegram_handler_provider()
+        tg_logger = TelegramLogger(
+            tg_handler=tg_handler,
+            dev_chat_id=tg_handler.notify_chat_id,
+        )
+        configure_bot_exception_hook(tg_logger)

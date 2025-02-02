@@ -129,6 +129,8 @@ class TelegramHandler(logging.Handler):
         self._default_parse_mode = parse_mode.upper()
         super().__init__(level)
 
+    notify_chat_id: int = property(lambda self: self._notify_chat_id)
+
     def emit(self, record: logging.LogRecord):
         """Send the specified logging record to the telegram chat."""
         log_entry = self.format(record)
@@ -166,6 +168,7 @@ class TelegramHandler(logging.Handler):
             now = dt.utcnow()
             if LAST_SENT:
                 while now - LAST_SENT < timedelta(seconds=self._send_delay):
+                    print(f'waiting for delay seconds', flush=True)
                     continue
 
             if is_python:
@@ -198,11 +201,14 @@ def _get_parts(text: str) -> Generator[str, None, None]:
         yield text
 
 
-def configure_bot_exception_hook(tg_handler: TelegramHandler):
+def configure_bot_exception_hook(tg_logger: TelegramLogger):
     """Configure Logging handler to emit application exceptions to telegram"""
     import io
     import traceback
     import sys
+
+    # restart logger
+    tg_logger.start()
 
     def format_exception(exc_type, exc_value, exc_traceback):
         """
@@ -219,6 +225,6 @@ def configure_bot_exception_hook(tg_handler: TelegramHandler):
     def _bot_hook(exc_type, exc_value, exc_traceback):
         text = format_exception(exc_type, exc_value, exc_traceback)
         sys.stderr.write(text)
-        tg_handler.send_log(text)
+        tg_logger.to_dev(text)
 
     sys.excepthook = _bot_hook

@@ -65,9 +65,5 @@ def make_config_dict(
         conf['handlers']['telegram'] = telegram_conf
         conf['loggers']['']['handlers'].append('telegram')
 
-        tg_base.configure_bot_exception_hook(
-            telegram_handler_provider()
-        )
-
     conf['loggers']['']['level'] = logging.getLevelName(log_level)
     return conf
