@@ -1,6 +1,7 @@
 import logging
 import queue
 import sys
+import time
 from collections.abc import Callable
 from datetime import timedelta
 from threading import Thread
@@ -75,10 +76,12 @@ class TelegramLogger(logging.Logger):
         self._started = False
 
     def _worker(self):
+        time.sleep(15)
+        self.info(f'starting {self.__class__.__name__}')
         while not self._stop_event.is_set():
-            print('waiting for message...')
+            self.debug('waiting for message...')
             msg, chat_id = self._msg_queue.get()
-            print('received message: {}'.format(msg))
+            self.debug('received message: {}'.format(msg))
             self.tg_handler.to_tg(msg, chat_id=chat_id)
 
     def to_tg(self, msg: str, chat_id: Optional[str | int] = None):

@@ -1,6 +1,6 @@
 [project]
 name = "python-purse"
-version = "1.0.1"
+version = "1.0.2"
 description = "utils and snippets for python projects"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,7 +16,28 @@ aiohttp = [
 
 [dependency-groups]
 dev = [
+    "ruff>=0.9.4",
     "aiogram>=3.17.0",
     "httpx>=0.28.1",
     "requests>=2.32.3",
+    "pytest-asyncio>=0.25.3",
+    "pytest>=8.3.4",
+    "coverage>=7.6.10",
+]
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_mode = "auto"
+addopts = [
+    '-s'
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "if settings.debug",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
 ]
