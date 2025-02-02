@@ -43,11 +43,14 @@ class SimpleLoggingBot(BotProtocol):
 
     def send_message(self, chat_id: ChatId, text: str, **kwargs) -> Any:
         """Send a message"""
-        return self._transport.post(
-            f"{self._path}/sendMessage",
-            data={"text": text, "chat_id": chat_id, **kwargs},
-            headers={"Content-Type": "application/json"},
-        )
+        try:
+            return self._transport.post(
+                f"{self._path}/sendMessage",
+                data={"text": text, "chat_id": chat_id, **kwargs},
+                headers={"Content-Type": "application/json"},
+            )
+        except Exception as e:
+            print(f"Failed to send message to {chat_id}: {e}")
 
 
 class StopEvent(Protocol):
