@@ -1,14 +1,13 @@
 import contextlib
 from typing import Optional, Iterable
 
-from aiogram.client.default import DefaultBotProperties
-from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.client.session.base import BaseSession
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.base import BaseStorage
-
 try:
     from aiogram import Bot, Dispatcher, Router, BaseMiddleware
+    from aiogram.client.default import DefaultBotProperties
+    from aiogram.client.session.aiohttp import AiohttpSession
+    from aiogram.client.session.base import BaseSession
+    from aiogram.enums import ParseMode
+    from aiogram.fsm.storage.base import BaseStorage
 
 except ImportError:
     raise ImportError('aiogram is not installed')
@@ -24,7 +23,7 @@ def get_dispatcher(
 ) -> Dispatcher:
     """Setup and return aiogram.Dispatcher"""
     dp = Dispatcher(storage=storage, name=name)
-    for middleware in middlewares:
+    for middleware in reversed(middlewares):
         dp.update.middleware(middleware())
 
     setup_routers(dp, *routes)
