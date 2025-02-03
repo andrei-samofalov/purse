@@ -26,7 +26,7 @@ async def main():
         except ZeroDivisionError as e:
             logger.error(e)
 
-    for _ in range(50):
+    for _ in range(1):
         _bad()
 
     await kill_event.wait()

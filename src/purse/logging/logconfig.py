@@ -30,16 +30,16 @@ DEFAULT_CONFIG = {
             'propagate': False,
         },
         'asyncio': {
-            'level': 'WARNING',
+            'level': 'ERROR',
         },
         'aiogram.event': {
-            'level': 'WARNING',
+            'level': 'ERROR',
         },
         'aiohttp.access': {
-            'level': 'WARNING',
+            'level': 'ERROR',
         },
         'httpcore': {
-            'level': 'WARNING',
+            'level': 'ERROR',
         },
     }
 }

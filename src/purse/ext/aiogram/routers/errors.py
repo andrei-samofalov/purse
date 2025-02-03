@@ -37,7 +37,7 @@ def make_error_router(
     extract_context_fn: Optional[ExtractContextCallable] = None,
     router_name: Optional[str] = "errors",
     handle_key_error: bool = True,
-    ker_error_message: Optional[str] = None,
+    key_error_message: Optional[str] = None,
     print_exception: bool = True,
     log_exception: bool = True,
 ) -> Router:
@@ -61,7 +61,7 @@ def make_error_router(
                 )
             )
             return await message.answer(
-                ker_error_message or _('An error occurred. Try again later.')
+                key_error_message or _('An error occurred. Try again later.')
             )
 
         @router.error(ExceptionTypeFilter(KeyError), F.update.callback_query.as_("query"))
@@ -82,7 +82,7 @@ def make_error_router(
                 )
             )
             return await query.answer(
-                ker_error_message or _('An error occurred. Try again later.'),
+                key_error_message or _('An error occurred. Try again later.'),
                 show_alert=True
             )
 

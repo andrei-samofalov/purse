@@ -126,7 +126,8 @@ class TelegramLogger(logging.Logger):
     def to_tg(self, message: str, chat_id: Optional[ChatId] = None):
         """Send message to telegram."""
         self.tg_handler.add_to_queue(
-            task=BotTask(message=message, chat_id=chat_id, format_python=False))
+            task=BotTask(message=message, chat_id=chat_id, format_python=False)
+        )
 
     def to_dev(self, message: str):
         """Shortcut for developer telegram notify"""
@@ -177,7 +178,6 @@ class TelegramHandler(logging.Handler):
     def emit(self, record: logging.LogRecord, copy_to_telegram: bool = True):
         """Send the specified logging record to the telegram chat."""
         log_entry = self.format(record)
-        sys.stderr.write(f"{log_entry}\n")
 
         if copy_to_telegram:
             self.add_to_queue(task=BotTask(message=log_entry))
@@ -185,7 +185,7 @@ class TelegramHandler(logging.Handler):
     def _log(self, message: str, level=logging.DEBUG, copy_to_telegram: bool = False):
         if self.level <= logging.DEBUG or self._parent_logger and self._parent_logger.level <= level:
             record = logging.LogRecord(
-                name="telegram",
+                name="purse.telegram",
                 level=level,
                 pathname=__file__,
                 lineno=inspect.currentframe().f_back.f_lineno,
