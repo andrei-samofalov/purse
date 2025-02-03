@@ -22,7 +22,7 @@ DEFAULT_CONFIG = {
         },
     },
     'loggers': {
-        '': {
+        'root': {
             'level': "DEBUG",
             'handlers': [
                 'console',
@@ -53,17 +53,16 @@ TELEGRAM_CONF = {
 
 def make_config_dict(
     log_level: int | str = logging.DEBUG,
-    enable_telegram: bool = True,
     telegram_handler_provider: Optional[TelegramHandlerProvider] = None,
 ) -> dict:
     """Make default config with provided log level"""
     conf = DEFAULT_CONFIG.copy()
 
-    if enable_telegram:
+    if telegram_handler_provider:
         telegram_conf = TELEGRAM_CONF.copy()
         telegram_conf["()"] = telegram_handler_provider
         conf['handlers']['telegram'] = telegram_conf
-        conf['loggers']['']['handlers'].append('telegram')
+        conf['loggers']['root']['handlers'].append('telegram')
 
-    conf['loggers']['']['level'] = logging.getLevelName(log_level)
+    conf['loggers']['root']['level'] = logging.getLevelName(log_level)
     return conf

@@ -13,8 +13,12 @@ except ImportError:
     requests_installed = False
 
 
-def get_default_http_client() -> type[BaseClient]:
+def get_default_http_client(use_simple: bool = False) -> type[BaseClient]:
     """Return the default http client depended on installed packages."""
+
+    if use_simple:
+        from .pure import SimpleHttpClient
+        return SimpleHttpClient
 
     if httpx_installed:
         from .httpx import HTTPXClient
