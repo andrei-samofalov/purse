@@ -55,7 +55,7 @@ def make_error_router(
             await bot.send_message(
                 dev_chat_id,
                 text=(
-                    f'Exception: {bold_fn(exc)}\n'
+                    f'Exception: {exc}\n'
                     f'Bot: @{bot_name}\n'
                     f'Message: {code_fn(text)}\n'
                 )
@@ -75,7 +75,7 @@ def make_error_router(
             await bot.send_message(
                 dev_chat_id,
                 text=(
-                    f'Exception: {bold_fn(exc)}\n'
+                    f'Exception: {exc}\n'
                     f'Bot: @{bot_name}\n'
                     f'Message: {code_fn(text)}\n'
                     f'Callback data: {code_fn(cb_data)}\n'
@@ -103,7 +103,7 @@ def make_error_router(
         if event_type == UpdateType.CALLBACK_QUERY:
             event = exception.update.callback_query
             await send_msg_to_dev(
-                text=f"{bold_fn(exc)}\n\n"
+                text=f"{exc}\n\n"
                      f"Chat ID:  {code_fn(event.message.chat.id)}\n"
                      f"User ID:  {code_fn(event.from_user.id)}\n"
                      f"Message:  \n{code_fn(event.message.text)}\n"
@@ -114,7 +114,7 @@ def make_error_router(
         elif event_type == UpdateType.MESSAGE:
             event = exception.update.message
             await send_msg_to_dev(
-                text=f"{bold_fn(exc)}\n\n"
+                text=f"{exc}\n\n"
                      f"Chat ID:  {code_fn(event.chat.id)}\n"
                      f"User ID:  {code_fn(event.from_user.id)}\n"
                      f"Message:  {code_fn(event.text)}\n"
