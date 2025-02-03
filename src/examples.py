@@ -18,16 +18,6 @@ async def main():
 
     kill_event = signals.setup()
     logger.info(f'app is up')
-    await asyncio.sleep(1)
-
-    def _bad():
-        try:
-            1 / 0
-        except ZeroDivisionError as e:
-            logger.error(e)
-
-    for _ in range(1):
-        _bad()
 
     await kill_event.wait()
     logger.info(f'app is down')
