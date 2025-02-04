@@ -1,17 +1,19 @@
 from typing import Optional
 
+from purse.logging import logger_factory
+
 try:
     from aiohttp import web
 
 except ImportError:
     raise ImportError('aiohttp is not installed.')
 
-from logging import getLogger, Logger
+from logging import Logger
 
 from aiohttp.abc import AbstractRouter
 from aiohttp.typedefs import Handler
 
-_logger = getLogger('asutils.aiohttp.app')
+_logger = logger_factory('aiohttp.app', include_project=True)
 AiohttpRoute = tuple[str, str, Handler | AbstractRouter, Optional[str]]
 
 

@@ -1,7 +1,6 @@
 import functools
 import sys
 from collections.abc import Callable, Awaitable
-from logging import getLogger, Logger
 from typing import Optional, Any
 
 from purse.func import func_call
@@ -21,8 +20,6 @@ except ImportError:
         "aiogram is not installed. Please install it and try again."
     )
 
-_logger = getLogger("bot.errors")
-
 CodeFormatCallable = Callable[[Any], str]
 ContextData = dict[str, Any]
 HandleForbiddenCallable = Callable[[ErrorEvent], Awaitable[None]]
@@ -32,7 +29,6 @@ ExtractContextCallable = Callable[[ErrorEvent], ContextData | Awaitable[ContextD
 def make_error_router(
     bot: Bot,
     dev_chat_id: int,
-    logger: Logger = _logger,
     code_fn: CodeFormatCallable = hcode,
     bold_fn: CodeFormatCallable = hbold,
     handle_forbidden_fn: Optional[HandleForbiddenCallable] = None,
@@ -90,16 +86,6 @@ def make_error_router(
     @router.errors()
     async def error_handler(exception: ErrorEvent):
         """Send errors to developer"""
-        if print_exception:
-            print(f'an error occurred in telegram context')
-            print(
-                exception.model_dump_json(
-                    indent=2, exclude_none=True,
-                    exclude={"exception"},
-                    exclude_unset=True,
-                    warnings=False,
-                ),
-            )
 
         event_type = exception.update.event_type
         exc_val = exception.exception
@@ -141,6 +127,17 @@ def make_error_router(
             sys.stderr.write(
                 format_exception(
                     type(exc_val), exc_val, exc_val.__traceback__)
+            )
+
+        if print_exception:
+            print('an error occurred in telegram context')
+            print(
+                exception.model_dump_json(
+                    indent=2, exclude_none=True,
+                    exclude={"exception"},
+                    exclude_unset=True,
+                    warnings=False,
+                ),
             )
 
     return router

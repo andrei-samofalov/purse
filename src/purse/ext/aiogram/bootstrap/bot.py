@@ -1,17 +1,18 @@
+import asyncio
 import contextlib
-from typing import Optional, Iterable
+from typing import Optional, Reversible
 
-try:
-    from aiogram import Bot, Dispatcher, Router, BaseMiddleware
-    from aiogram.client.default import DefaultBotProperties
-    from aiogram.client.session.aiohttp import AiohttpSession
-    from aiogram.client.session.base import BaseSession
-    from aiogram.enums import ParseMode
-    from aiogram.fsm.storage.base import BaseStorage
+from aiogram import Bot, Dispatcher, Router, BaseMiddleware
+from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.session.base import BaseSession
+from aiogram.enums import ParseMode
+from aiogram.fsm.storage.base import BaseStorage
 
-except ImportError:
-    raise ImportError('aiogram is not installed')
+from purse.logging import logger_factory
+from purse.signals import prepare_shutdown, shutdown_complete
 
+logger = logger_factory('ext.aiogram.bot', include_project=True)
 _empty_iterable = frozenset()
 
 
@@ -19,7 +20,7 @@ def get_dispatcher(
     *routes: Router,
     name: Optional[str] = None,
     storage: Optional[BaseStorage] = None,
-    middlewares: Iterable[type[BaseMiddleware]] = _empty_iterable,
+    middlewares: Reversible[type[BaseMiddleware]] = _empty_iterable,
 ) -> Dispatcher:
     """Setup and return aiogram.Dispatcher"""
     dp = Dispatcher(storage=storage, name=name)
@@ -36,6 +37,38 @@ def setup_routers(dp: Dispatcher, *routers: Router) -> None:
     dp.include_routers(*routers)
 
 
+class SessionFactory:
+    """Self-closing AiohttpSession factory (singleton though)"""
+
+    def __init__(
+        self,
+        prepare_shutdown_event: Optional[asyncio.Event] = None,
+        shutdown_complete_event: Optional[asyncio.Event] = None,
+    ) -> None:
+        self._shutdown_event = prepare_shutdown_event or prepare_shutdown
+        self._shutdown_complete = shutdown_complete_event or shutdown_complete
+        self._session: Optional[AiohttpSession] = None
+
+    def get_session(self):
+        """Return aiogram session, which be closed when prepare shutdown event would be set"""
+        if self._session is None:
+            self._session = AiohttpSession()
+
+            async def _close_session():
+                logger.info('session close scheduled.')
+                await self._shutdown_event.wait()
+                await self._session.close()
+                logger.info('global session closed.')
+                self._shutdown_complete.set()
+
+            asyncio.shield(asyncio.create_task(_close_session()))
+
+        return self._session
+
+
+session_factory = SessionFactory()
+
+
 def get_bot(
     token: str,
     session: Optional[BaseSession] = None,
@@ -44,7 +77,7 @@ def get_bot(
     """Create and return an aiogram.Bot."""
     return Bot(
         token=token,
-        session=session,
+        session=session or session_factory.get_session(),
         default=DefaultBotProperties(parse_mode=parse_mode),
     )
 

@@ -2,15 +2,16 @@ import asyncio
 import inspect
 import signal
 from collections.abc import Callable
-from logging import getLogger
 from typing import Optional, TypeAlias, Awaitable
+
+from purse.logging import logger_factory
 
 prepare_shutdown = asyncio.Event()
 """Use this event in your code."""
 shutdown_complete = asyncio.Event()
 """Use this event in your code."""
 
-logger = getLogger('asutils.signals')
+logger = logger_factory('signals', include_project=True)
 HandleShutdownCallable: TypeAlias = Callable[
     [signal.Signals, asyncio.Event],
     object | Awaitable[object]

@@ -1,7 +1,37 @@
 import inspect
-from typing import Generic, TypeGuard, TypeVar, Any
+from types import TracebackType
+from typing import Generic, TypeGuard, TypeVar, Any, Protocol, Mapping, TypeAlias
 
 from purse.types import ProtocolType
+
+_SysExcInfoType: TypeAlias = tuple[type[BaseException], BaseException, TracebackType | None] | \
+                             tuple[None, None, None]
+_ExcInfoType: TypeAlias = None | bool | _SysExcInfoType | BaseException
+
+
+class LoggerProtocol(Protocol):
+    """Logger protocol"""
+
+    def error(
+        self,
+        msg: object,
+        *args: object,
+        exc_info: _ExcInfoType = None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None,
+    ) -> None: ...
+
+    def info(
+        self,
+        msg: object,
+        *args: object,
+        exc_info: _ExcInfoType = None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None,
+    ) -> None: ...
+
 
 isfun = inspect.isfunction
 iscoro = inspect.iscoroutinefunction

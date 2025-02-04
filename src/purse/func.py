@@ -1,8 +1,14 @@
 import inspect
 import warnings
+from collections.abc import Callable, Awaitable, Coroutine
+from typing import ParamSpec, TypeVar, Union, Any
+
+P = ParamSpec("P")
+T = TypeVar("T")
+FunctionOrCoroutine = Union[Callable[[P], T | Awaitable[T]], Coroutine[Any, Any, T]]
 
 
-async def func_call(fn_or_coro, *args, **kwargs):
+async def func_call(fn_or_coro: FunctionOrCoroutine, *args: P.args, **kwargs: P.kwargs) -> T:
     """Call the function or coroutine."""
 
     if inspect.iscoroutinefunction(fn_or_coro):

@@ -65,4 +65,9 @@ def make_config_dict(
         conf['loggers']['root']['handlers'].append('telegram')
 
     conf['loggers']['root']['level'] = logging.getLevelName(log_level)
+
+    logging.logProcesses = False
+    logging.logThreads = False
+    logging.logMultiProcessing = False
+
     return conf

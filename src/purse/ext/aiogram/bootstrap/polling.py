@@ -6,18 +6,15 @@ from collections.abc import Callable
 from contextvars import Context
 from typing import Any, Awaitable, Dict, List, Optional
 
+from aiogram import Bot
+from aiogram.dispatcher.dispatcher import DEFAULT_BACKOFF_CONFIG, Dispatcher
+from aiogram.exceptions import TelegramAPIError
+from aiogram.types import BotCommand
+from aiogram.types import User
+from aiogram.utils.backoff import BackoffConfig
+
 from purse.func import func_call
 from purse.logging import default_logger
-
-try:
-    from aiogram import Bot
-    from aiogram.types import BotCommand
-    from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
-    from aiogram.dispatcher.dispatcher import DEFAULT_BACKOFF_CONFIG, Dispatcher
-    from aiogram.types import User
-    from aiogram.utils.backoff import BackoffConfig
-except ImportError:
-    raise ImportError('aiogram is not installed')
 
 
 class PollingManager:

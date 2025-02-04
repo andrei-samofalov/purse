@@ -1,6 +1,6 @@
 import pytest
 
-from tests.test_interfaces.conftest import User, DoesNotExist
+from tests.test_interfaces.conftest import User
 
 
 @pytest.mark.asyncio

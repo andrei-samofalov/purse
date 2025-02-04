@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from logging.config import dictConfig
 from typing import Optional, Iterable
 
+from purse.logging._internal import logger_factory
 from purse.logging.logconfig import TelegramHandlerProvider, make_config_dict
 from purse.logging.telegram import (
     TelegramLogger,
@@ -14,10 +15,12 @@ __all__ = [
     "SimpleLoggingBot",
     "TelegramSetup",
     'default_logger',
+    'logger_factory',
     'setup',
 ]
 
-default_logger = logging.getLogger('asutils')
+default_logger = logger_factory('purse')
+
 _empty_iterable = object()
 _default_mute = {
     'asyncio',
@@ -38,7 +41,7 @@ class TelegramSetup:
     send_delay: float = 1
 
     service_name: str
-    logger_name: str = 'asutils'
+    logger_name: str = 'purse'
     parse_mode: str = 'MARKDOWN'
     logger_level: int | str = logging.INFO
     stop_event: Optional[StopEvent] = None

@@ -12,6 +12,7 @@ from datetime import timedelta, datetime
 from typing import Generator, Optional, Any, Protocol
 
 from purse import datetime as dt
+from purse._meta import __project__
 from purse.http.clients import get_default_http_client
 from purse.signals import prepare_shutdown
 
@@ -94,7 +95,7 @@ class TelegramLogger(logging.Logger):
         self,
         tg_handler: "TelegramHandler",
         dev_chat_id: Optional[ChatId] = None,
-        name: str = 'asutils',
+        name: str = 'purse',
         level: int | str = logging.ERROR,
     ):
         super().__init__(name, level)
@@ -185,7 +186,7 @@ class TelegramHandler(logging.Handler):
     def _log(self, message: str, level=logging.DEBUG, copy_to_telegram: bool = False):
         if self.level <= logging.DEBUG or self._parent_logger and self._parent_logger.level <= level:
             record = logging.LogRecord(
-                name="purse.telegram",
+                name=f"{__project__}.telegram",
                 level=level,
                 pathname=__file__,
                 lineno=inspect.currentframe().f_back.f_lineno,

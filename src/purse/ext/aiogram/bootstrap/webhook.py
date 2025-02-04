@@ -1,31 +1,25 @@
 import asyncio
+import logging
 from collections.abc import Callable, Awaitable
 from typing import Any, Optional
 
+from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramAPIError
+from aiogram.types import User, BotCommand
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler
+from aiohttp import web
+
 from purse.func import func_call
-from purse.logging import default_logger
-
-try:
-    from aiohttp import web
-except ImportError:
-    raise ImportError('aiohttp is not installed.')
-
-try:
-    from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError
-    from aiogram import Bot, Dispatcher
-    from aiogram.types import User, BotCommand
-    from aiogram.webhook.aiohttp_server import SimpleRequestHandler
-except ImportError:
-    raise ImportError('aiogram is not installed.')
-
-import logging
+from purse.logging import logger_factory
 
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
 SuccessCallable = Callable[[Bot, User], Any | Awaitable[Any]]
 
+_logger = logger_factory('ext.aiogram', include_project=True)
+
 
 def _default_on_failure(bot: Bot, error: TelegramAPIError):
-    default_logger.error(f"couldn't start bot {bot.id}: {error}")
+    _logger.error(f"couldn't start bot {bot.id}: {error}")
 
 
 async def setup_webhook(
@@ -37,12 +31,13 @@ async def setup_webhook(
     commands: list[BotCommand],
     on_failure: Optional[FailureCallable] = _default_on_failure,
     on_success: Optional[SuccessCallable] = None,
-    logger: logging.Logger = default_logger,
+    logger: logging.Logger = _logger,
+    timeout: Optional[float] = 3,
 ) -> None:
     """Configure bot webhook."""
     try:
         me = await bot.get_me()
-        await asyncio.wait_for(bot.set_my_commands(commands), 3)
+        await asyncio.wait_for(bot.set_my_commands(commands), timeout)
     except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
         return await func_call(on_failure, *(bot, exc))
 
