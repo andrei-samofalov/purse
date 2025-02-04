@@ -1,5 +1,6 @@
 import sys
 
+from django.core import signals
 from django.core.exceptions import RequestDataTooBig
 from django.core.handlers.asgi import (
     ASGIRequest as DjangoASGIRequest,
@@ -7,9 +8,10 @@ from django.core.handlers.asgi import (
 )
 from django.core.handlers.wsgi import (
     WSGIRequest as DjangoWSGIRequest,
-    WSGIHandler as DjangoWSGIHandler,
+    WSGIHandler as DjangoWSGIHandler, get_script_name,
 )
 from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.urls.base import set_script_prefix
 
 from purse.logging import logger_factory
 
@@ -36,6 +38,32 @@ class PurseWSGIHandler(DjangoWSGIHandler):
 
     def __getitem__(self, key):
         return self._storage[key]
+
+    def __call__(self, environ, start_response):
+        set_script_prefix(get_script_name(environ))
+        signals.request_started.send(sender=self.__class__, environ=environ)
+        request = self.request_class(self, environ)
+        response = self.get_response(request)
+
+        response._handler_class = self.__class__
+
+        status = "%d %s" % (response.status_code, response.reason_phrase)
+        response_headers = [
+            *response.items(),
+            *(("Set-Cookie", c.output(header="")) for c in response.cookies.values()),
+        ]
+        start_response(status, response_headers)
+        if getattr(response, "file_to_stream", None) is not None and environ.get(
+            "wsgi.file_wrapper"
+        ):
+            # If `wsgi.file_wrapper` is used the WSGI server does not call
+            # .close on the response, but on the file wrapper. Patch it to use
+            # response.close instead which takes care of closing all files.
+            response.file_to_stream.close = response.close
+            response = environ["wsgi.file_wrapper"](
+                response.file_to_stream, response.block_size
+            )
+        return response
 
 
 class PurseASGIRequest(DjangoASGIRequest):
