@@ -1,9 +1,11 @@
 import functools
+import sys
 from collections.abc import Callable, Awaitable
 from logging import getLogger, Logger
 from typing import Optional, Any
 
 from purse.func import func_call
+from purse.logging.telegram import format_exception
 
 try:
     from aiogram import Router, Bot
@@ -45,7 +47,6 @@ def make_error_router(
     router = Router(name=router_name)
 
     if handle_key_error is True:
-
         @router.error(ExceptionTypeFilter(KeyError), F.update.message.as_("message"))
         async def key_error_message_handler(error: ErrorEvent, message: Message):
             """Key Error handler for Message update."""
@@ -94,7 +95,8 @@ def make_error_router(
             print(exception.model_dump_json(indent=2, exclude_none=True, exclude={"exception"}))
 
         event_type = exception.update.event_type
-        exc = code_fn(exception.exception)
+        exc_val = exception.exception
+        exc = code_fn(exc_val)
         send_msg_to_dev = functools.partial(bot.send_message, chat_id=dev_chat_id)
 
         ctx = {} if not extract_context_fn else await func_call(extract_context_fn, exception)
@@ -120,7 +122,7 @@ def make_error_router(
                      f"Message:  {code_fn(event.text)}\n"
                      f"{ctx_text}"
             )
-        elif isinstance(exception.exception, TelegramForbiddenError):
+        elif isinstance(exc_val, TelegramForbiddenError):
             if handle_forbidden_fn:
                 await handle_forbidden_fn(exception)
             return
@@ -129,6 +131,9 @@ def make_error_router(
             await send_msg_to_dev(text=f"{bold_fn('Error:')}\n{exc}\n{ctx_text}")
 
         if log_exception:
-            logger.exception(exception.exception)
+            sys.stderr.write(
+                format_exception(
+                    type(exc_val), exc_val, exc_val.__traceback__)
+            )
 
     return router
