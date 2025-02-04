@@ -92,7 +92,14 @@ def make_error_router(
         """Send errors to developer"""
         if print_exception:
             print(f'an error occurred in telegram context')
-            print(exception.model_dump_json(indent=2, exclude_none=True, exclude={"exception"}))
+            print(
+                exception.model_dump_json(
+                    indent=2, exclude_none=True,
+                    exclude={"exception"},
+                    exclude_unset=True,
+                    warnings=False,
+                ),
+            )
 
         event_type = exception.update.event_type
         exc_val = exception.exception

@@ -273,4 +273,4 @@ def format_exception(exc_type, exc_value, exc_traceback):
     sval = sio.getvalue()
     sio.close()
 
-    return sval.rstrip('\n')
+    return sval
