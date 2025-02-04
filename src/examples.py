@@ -17,10 +17,10 @@ async def main():
     )
 
     kill_event = signals.setup()
-    logger.info(f'app is up')
+    logger.info('app is up')
 
     await kill_event.wait()
-    logger.info(f'app is down')
+    logger.info('app is down')
 
 
 if __name__ == '__main__':
