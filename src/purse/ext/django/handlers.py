@@ -3,13 +3,39 @@ import sys
 from django.core.exceptions import RequestDataTooBig
 from django.core.handlers.asgi import (
     ASGIRequest as DjangoASGIRequest,
-    ASGIHandler as DjangoASGIHandler
+    ASGIHandler as DjangoASGIHandler,
+)
+from django.core.handlers.wsgi import (
+    WSGIRequest as DjangoWSGIRequest,
+    WSGIHandler as DjangoWSGIHandler,
 )
 from django.http.response import HttpResponseBadRequest, HttpResponse
 
 from purse.logging import logger_factory
 
 logger = logger_factory("django.request", include_project=True)
+
+
+class PurseWSGIRequest(DjangoWSGIRequest):
+    def __init__(self, app, environ):
+        super().__init__(environ)
+        self._app = app
+
+    app: "PurseWSGIHandler" = property(lambda self: self._app)
+
+
+class PurseWSGIHandler(DjangoWSGIHandler):
+    request_class = PurseWSGIRequest
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._storage = {}
+
+    def __setitem__(self, key, value):
+        self._storage[key] = value
+
+    def __getitem__(self, key):
+        return self._storage[key]
 
 
 class PurseASGIRequest(DjangoASGIRequest):
