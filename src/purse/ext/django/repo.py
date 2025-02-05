@@ -104,21 +104,25 @@ class DjangoCommitDAO(CommitRepoProtocol[DjangoModelType], t.Generic[DjangoModel
         )
 
 
-class PurseDjangoRepo(t.Generic[DjangoModelType]):
+DjangoCommitDAOType = t.TypeVar("DjangoCommitDAOType", bound=DjangoCommitDAO)
+DjangoQueryDAOType = t.TypeVar("DjangoQueryDAOType", bound=DjangoQueryDAO)
+
+
+class PurseDjangoRepo(t.Generic[DjangoModelType, PKType, DjangoCommitDAOType, DjangoQueryDAOType]):
     """Django repo implementation."""
     domain_model: type[DjangoModelType]
 
     def __init__(
         self,
-        commit_dao: type[DjangoCommitDAO],
-        query_dao: type[DjangoQueryDAO],
+        commit_dao: type[DjangoCommitDAOType],
+        query_dao: type[DjangoQueryDAOType],
     ) -> None:
         _objects = t.cast(models.Manager, self.domain_model._default_manager)
-        self.query = query_dao[DjangoModelType](_objects)
+        self.query = query_dao[DjangoModelType, PKType](_objects)
         self.session = commit_dao[DjangoModelType](_objects)
         self._context = False
 
-    async def __aenter__(self) -> "PurseDjangoRepo[DjangoModelType]":
+    async def __aenter__(self) -> t.Self:
         self._context = True
         return self
 
