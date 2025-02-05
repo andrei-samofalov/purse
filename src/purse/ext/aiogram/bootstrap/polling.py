@@ -13,7 +13,7 @@ from aiogram.types import BotCommand
 from aiogram.types import User
 from aiogram.utils.backoff import BackoffConfig
 
-from purse.func import func_call
+from purse import func
 from purse.logging import default_logger
 
 
@@ -151,10 +151,10 @@ async def setup_polling(
         me = await bot.get_me()
         await asyncio.wait_for(bot.set_my_commands(commands), 3)
     except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
-        return await func_call(on_failure, bot, exc)
+        return await func.acall(on_failure, *(bot, exc))
 
     await bot.delete_webhook()
     await bot.get_updates(offset=-1)
 
     if on_success:
-        await func_call(on_success, *(bot, me))
+        await func.acall(on_success, *(bot, me))

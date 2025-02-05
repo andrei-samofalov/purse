@@ -3,22 +3,17 @@ import sys
 from collections.abc import Callable, Awaitable
 from typing import Optional, Any
 
-from purse.func import func_call
-from purse.logging.telegram import format_exception
+from aiogram import F
+from aiogram import Router, Bot
+from aiogram.enums.update_type import UpdateType
+from aiogram.exceptions import TelegramForbiddenError
+from aiogram.filters import ExceptionTypeFilter
+from aiogram.types import ErrorEvent, Message, CallbackQuery
+from aiogram.utils.i18n import gettext as _
+from aiogram.utils.markdown import hcode, hbold
 
-try:
-    from aiogram import Router, Bot
-    from aiogram import F
-    from aiogram.enums.update_type import UpdateType
-    from aiogram.exceptions import TelegramForbiddenError
-    from aiogram.types import ErrorEvent, Update, Message, CallbackQuery
-    from aiogram.utils.markdown import hcode, hbold
-    from aiogram.utils.i18n import gettext as _
-    from aiogram.filters import ExceptionTypeFilter
-except ImportError:
-    raise ImportError(
-        "aiogram is not installed. Please install it and try again."
-    )
+from purse import func
+from purse.logging.telegram import format_exception
 
 CodeFormatCallable = Callable[[Any], str]
 ContextData = dict[str, Any]
@@ -92,7 +87,7 @@ def make_error_router(
         exc = code_fn(exc_val)
         send_msg_to_dev = functools.partial(bot.send_message, chat_id=dev_chat_id)
 
-        ctx = {} if not extract_context_fn else await func_call(extract_context_fn, exception)
+        ctx = {} if not extract_context_fn else await func.acall(extract_context_fn, exception)
         ctx_text = "\n".join([f"{ctx_key}: {ctx_val}" for ctx_key, ctx_val in ctx.items()])
 
         if event_type == UpdateType.CALLBACK_QUERY:

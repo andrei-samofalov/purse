@@ -13,7 +13,7 @@ from logging import Logger
 from aiohttp.abc import AbstractRouter
 from aiohttp.typedefs import Handler
 
-_logger = logger_factory('aiohttp.app', include_project=True)
+_logger = logger_factory('ext.aiohttp', include_project=True)
 AiohttpRoute = tuple[str, str, Handler | AbstractRouter, Optional[str]]
 
 

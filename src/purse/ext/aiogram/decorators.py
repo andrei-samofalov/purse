@@ -1,4 +1,3 @@
-import asyncio
 import functools
 from typing import Callable, Awaitable, Optional
 from typing import ParamSpec, TypeVar
@@ -27,17 +26,3 @@ def tg_pass(func: ToDecorate) -> Decorated:
         return result
 
     return _wrapper
-
-
-@tg_pass
-async def call(arg: int) -> int:
-    return arg + 2
-
-
-async def main():
-    w = await call(2)
-    print(w)
-
-
-if __name__ == '__main__':
-    asyncio.run(main())

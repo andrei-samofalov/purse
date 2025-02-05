@@ -9,7 +9,7 @@ from aiogram.types import User, BotCommand
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiohttp import web
 
-from purse.func import func_call
+from purse import func
 from purse.logging import logger_factory
 
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
@@ -39,7 +39,7 @@ async def setup_webhook(
         me = await bot.get_me()
         await asyncio.wait_for(bot.set_my_commands(commands), timeout)
     except (asyncio.TimeoutError, asyncio.CancelledError, TelegramAPIError) as exc:
-        return await func_call(on_failure, *(bot, exc))
+        return await func.acall(on_failure, *(bot, exc))
 
     if not bot_hook.startswith('/'):
         bot_hook = f'/{bot_hook}'
@@ -60,12 +60,12 @@ async def setup_webhook(
             log_msg += " FAILED"
 
     except TelegramAPIError as exc:
-        await func_call(on_failure, *(bot, exc))
+        await func.acall(on_failure, *(bot, exc))
         return logger.error(f"can't start bot {bot.id} {exc}")
 
     logger.info(log_msg)
 
     if on_success is not None:
-        await func_call(on_success, *(bot, me))
+        await func.acall(on_success, *(bot, me))
 
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=bot_hook)

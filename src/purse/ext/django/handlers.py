@@ -15,7 +15,7 @@ from django.urls.base import set_script_prefix
 
 from purse.logging import logger_factory
 
-logger = logger_factory("django.request", include_project=True)
+logger = logger_factory("ext.django", include_project=True)
 
 
 class PurseWSGIRequest(DjangoWSGIRequest):
