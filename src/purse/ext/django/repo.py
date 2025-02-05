@@ -33,7 +33,7 @@ class PurseDjangoModel(models.Model):
 DjangoModelType = t.TypeVar("DjangoModelType", bound=PurseDjangoModel)
 
 
-class DjangoQueryDAO(QueryRepoProtocol[DjangoModelType], t.Generic[DjangoModelType]):
+class DjangoQueryDAO(QueryRepoProtocol[DjangoModelType, int], t.Generic[DjangoModelType]):
     """Django Query Data access object."""
 
     def __init__(self, objects: models.Manager):
