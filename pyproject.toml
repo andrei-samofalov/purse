@@ -1,10 +1,14 @@
 [project]
 name = "python-purse"
-version = "1.0.20"
+version = "1.0.22"
 description = "utils and snippets for python projects"
 requires-python = ">=3.11"
 dependencies = [
 ]
+
+[tool.setuptools]
+packages = ["purse"]
+package-dir = {"" = "src"}
 
 [project.optional-dependencies]
 aiogram = [

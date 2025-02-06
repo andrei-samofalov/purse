@@ -45,7 +45,6 @@ DEFAULT_CONFIG = {
 }
 
 TELEGRAM_CONF = {
-    'level': 'ERROR',
     'formatter': 'console',
     '()': TelegramHandlerProvider,
 }

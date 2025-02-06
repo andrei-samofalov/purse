@@ -16,9 +16,8 @@ from purse._meta import __project__
 from purse.http.clients import get_default_http_client
 from purse.signals import prepare_shutdown
 
-LAST_SENT = None
+
 ChatId = int | str
-global_lock = threading.Lock()
 
 
 class StopEvent(Protocol):
@@ -140,17 +139,8 @@ class TelegramLogger(logging.Logger):
         self.tg_handler.start()
 
 
-class TelegramHandler(logging.Handler):
+class TelegramHandler(logging.StreamHandler):
     """Telegram logging handler"""
-
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        with global_lock:
-            if not cls._instance:
-                cls._instance = super().__new__(cls)
-
-        return cls._instance
 
     def __init__(
         self,
@@ -161,8 +151,8 @@ class TelegramHandler(logging.Handler):
         parse_mode: str = 'MARKDOWN',
         service_name: Optional[str] = None,
         stop_event: Optional[StopEvent] = None,
-        level=logging.NOTSET,
     ):
+        super().__init__(stream=sys.stderr)
         self._bot = bot
         self._log_chat_id = log_chat_id
         self._send_delay = send_delay
@@ -173,17 +163,18 @@ class TelegramHandler(logging.Handler):
         self._queue: queue.Queue[BotTask] = queue.Queue()
         self._stop_event = stop_event or prepare_shutdown
         self._started = False
-        self._last_sent: Optional[datetime] = None
-        super().__init__(level)
+        self._last_sent: Optional[datetime] = dt.utcnow()
+        self.setLevel(logging.ERROR)
+        self.createLock()
+
 
     def emit(self, record: logging.LogRecord, copy_to_telegram: bool = True):
         """Send the specified logging record to the telegram chat."""
-        log_entry = self.format(record)
-
         if copy_to_telegram:
+            log_entry = self.format(record)
             self.add_to_queue(task=BotTask(message=log_entry))
 
-    def _log(self, message: str, level=logging.DEBUG, copy_to_telegram: bool = False):
+    def _log(self, message: str | Exception, level=logging.DEBUG, copy_to_telegram: bool = False):
         if self.level <= logging.DEBUG or self._parent_logger and self._parent_logger.level <= level:
             record = logging.LogRecord(
                 name=f"{__project__}.telegram",
@@ -201,17 +192,12 @@ class TelegramHandler(logging.Handler):
         self._queue.put(task)
 
     def _queue_worker(self):
-        thread = threading.current_thread()
-        self._log(f'{thread}: starting {self.__class__.__name__}', level=logging.INFO)
         while not self._stop_event.is_set():
-
             try:
                 if (elapsed := dt.utcnow() - self._last_sent) < timedelta(self._send_delay):
                     sleep_for = self._send_delay - elapsed.seconds
-                    self._log(f'sleeping for {sleep_for:.2f} seconds', level=logging.INFO)
                     time.sleep(sleep_for)
 
-                self._log('waiting for messages...')
                 task = self._queue.get()
 
                 for text in task.text_parts():
@@ -230,7 +216,7 @@ class TelegramHandler(logging.Handler):
                     self._last_sent = dt.utcnow()
 
             except Exception as e:
-                self._log(str(e))
+                logging.log(logging.ERROR, f"Failed to send message: {e}")
 
     def set_parent_logger(self, logger: TelegramLogger):
         """Set parent Telegram logger."""

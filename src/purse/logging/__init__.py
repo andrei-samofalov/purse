@@ -66,7 +66,6 @@ def setup(
         stop_event=telegram_setup.stop_event,
         parse_mode=telegram_setup.parse_mode,
         service_name=telegram_setup.service_name,
-        level=logging.ERROR,
     ) if telegram_setup else None
 
     config_dict = config_dict or make_config_dict(
