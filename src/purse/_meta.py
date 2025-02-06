@@ -1,2 +1,2 @@
 __project__ = "purse"
-__version__ = "1.0.19"
+__version__ = "1.0.20"

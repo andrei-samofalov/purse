@@ -38,6 +38,5 @@ async def handle_event(
                 return await event.message.edit_caption(**message_kwargs)
             else:
                 return await event.message.edit_text(**message_kwargs)
-        except TelegramBadRequest as ex:
-            logger.error(ex)
+        except TelegramBadRequest:
             return await event.message.answer(**message_kwargs)
