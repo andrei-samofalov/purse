@@ -22,42 +22,83 @@ or other tools, this library provides ready-to-use code modules to speed up deve
 
 - **Logging**  
   Custom logging configurations and integrations (including Telegram-based logging).
-  ```python
-  config = ConfigParser()
-  config.read('config.ini')
-  bot_config = config['bot']
+    ```python
+    from configparser import ConfigParser
+
+    import purse.logging
+  
+    config = ConfigParser()
+    config.read('config.ini')
+    bot_config = config['bot']
     
-  purse.logging.setup(
-    telegram_setup=TelegramSetup(
-        bot=logging.SimpleLoggingBot(token=bot_config.get('token')),
+    tg_logger = purse.logging.setup(
+      telegram_setup=purse.logging.TelegramSetup(
+        bot=purse.logging.SimpleLoggingBot(token=bot_config.get('token')),
         log_chat_id=bot_config.get('log_chat_id'),
         send_delay=bot_config.getint('send_delay'),
         logger_level=bot_config.getint('logger_level'),
         service_name=bot_config.get('service_name'),
-    ),
-  )
+      ),
+    )
+  
+    tg_logger.debug("dev message", to_dev=True)  # prints to stderr and ends message to telegram
+  
+    try:
+        raise Exception("some exception")
+    except Exception as exc:
+        tg_logger.exception(exc)  # prints traceback to stderr and ends message to telegram
   ```
 
 - **Interfaces and Repositories**  
-  Protocol definitions and in-memory repository implementations for fast prototyping.
+  Protocol definitions and in-memory repository implementations for fast prototyping and testing.
 
-- **JSON and Functional Helpers**  
-  Utility functions to simplify JSON handling and functional programming patterns.
+- **JSON encoders and decoders**  
+  Utility functions and classes to simplify JSON handling (mostly decoding and encoding Decimals, 
+  UUIDs, dates, and other specific types).
+```python
+from purse import json as purse_json
+from decimal import Decimal
+
+purse_json.dumps({"val": Decimal("100")})  # '{"val": "100"}'
+purse_json.loads('{"val": "100"}')  # {'val': Decimal('100')}
+
+```
+
+- **Asyncio signals handling**
+  Easy loop signal setup for SIGINT and SIGTERM. 
+  Use predefined `purse.signals.prepare_shutdown` (internal flag of this event would be set to True 
+  when one of signals received) and `purse.signals.shutdown_complete` events in your code for more 
+  compatability.
+  ```python 
+  import purse
+  import asyncio 
+  
+  async def main():
+    kill_event = purse.signals.setup()
+    ... # some startup logic
+    
+    await kill_event.wait()
+    ... # some shutdown logic
+    await purse.signals.shutdown_complete.wait()
+    
+  
+  if __name__ == '__main__':
+      asyncio.run(main())
+  ```
+  You can pass your custom function to `purse.signals.setup` for handling signals. This function 
+  must have exact two arguments: `signal.Signals` and `asyncio.Event` (internal flag of this event 
+  you must set to True due the function execution).
+
 
 - **Additional Utilities**  
-  Signal handling, system-level helpers, type utilities, and more.
+  System-level helpers, type utilities, and more.
 
 ## Installation
 
-If **python‑purse** is published on PyPI, you can install it via pip:
+You can install **python-purse** via pip (or with your another favorite manager) from PyPi:
 
 ```bash
 pip install python-purse
-```
-
-Or, with extras:
-```bash
-pip install python-purse[aiogram]
 ```
 
 ## Contributing
@@ -77,5 +118,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Contacts
 
 [email](mailto:andrei.e.samofalov@gmail.com)
+
 [telegram](https://t.me/samofalov_andrey)
 
