@@ -2,7 +2,7 @@ import typing as t
 
 from django.db import models
 
-from purse.interfaces.protocols import QueryRepoProtocol, CommitRepoProtocol, PKType
+from purse.interfaces.protocols import CommitRepoProtocol, PKType, QueryRepoProtocol
 
 
 class PurseDjangoError(Exception):

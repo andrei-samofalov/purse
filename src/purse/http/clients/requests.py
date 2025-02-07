@@ -3,7 +3,7 @@ from purse.http.clients import BaseClient
 
 imports.ensure_installed('requests')
 
-import requests
+import requests  # noqa: E402
 
 
 class RequestsClient(BaseClient):

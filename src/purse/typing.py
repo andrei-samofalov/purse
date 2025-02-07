@@ -1,6 +1,6 @@
 import inspect
 from types import TracebackType
-from typing import Generic, TypeGuard, TypeVar, Any, Protocol, Mapping, TypeAlias
+from typing import Any, Generic, Mapping, Protocol, TypeAlias, TypeGuard, TypeVar
 
 from purse.types import ProtocolType
 

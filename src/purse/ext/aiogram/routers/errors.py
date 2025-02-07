@@ -1,16 +1,15 @@
 import functools
 import sys
-from collections.abc import Callable, Awaitable
-from typing import Optional, Any
+from collections.abc import Awaitable, Callable
+from typing import Any, Optional
 
-from aiogram import F
-from aiogram import Router, Bot
+from aiogram import Bot, F, Router
 from aiogram.enums.update_type import UpdateType
 from aiogram.exceptions import TelegramForbiddenError
 from aiogram.filters import ExceptionTypeFilter
-from aiogram.types import ErrorEvent, Message, CallbackQuery
+from aiogram.types import CallbackQuery, ErrorEvent, Message
 from aiogram.utils.i18n import gettext as _
-from aiogram.utils.markdown import hcode, hbold
+from aiogram.utils.markdown import hbold, hcode
 
 from purse import func
 from purse.logging.telegram import format_exception

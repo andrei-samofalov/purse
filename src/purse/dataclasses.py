@@ -4,7 +4,7 @@ source:
 
 
 from dataclasses import Field, fields
-from typing import Any, Iterable, TypeGuard, Protocol, ClassVar, AbstractSet
+from typing import AbstractSet, Any, ClassVar, Iterable, Protocol, TypeGuard
 
 
 class DataClassProtocol(Protocol):

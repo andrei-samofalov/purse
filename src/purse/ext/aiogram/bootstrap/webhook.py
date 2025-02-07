@@ -1,11 +1,11 @@
 import asyncio
 import logging
-from collections.abc import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 from typing import Any, Optional
 
 from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramAPIError
-from aiogram.types import User, BotCommand
+from aiogram.types import BotCommand, User
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiohttp import web
 

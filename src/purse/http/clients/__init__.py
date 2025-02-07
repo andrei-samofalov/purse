@@ -2,13 +2,13 @@ from purse.http.clients.base import BaseClient
 
 httpx_installed = True
 try:
-    import httpx
+    import httpx  # noqa: F401
 except ImportError:
     httpx_installed = False
 
 requests_installed = True
 try:
-    import requests
+    import requests  # noqa: F401
 except ImportError:
     requests_installed = False
 

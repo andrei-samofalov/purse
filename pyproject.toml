@@ -1,34 +1,57 @@
 [project]
 name = "python-purse"
-version = "1.0.22"
-description = "utils and snippets for python projects"
+version = "1.0.23"
+description = "Snippets and utils for python projects"
 requires-python = ">=3.11"
-dependencies = [
+readme = "readme.md"
+license-files = ['LICENSE']
+authors = [
+    { "name" = "Andrei Samofalov", "email" = "andrei.e.samofalov@gmail.com" }
 ]
+keywords = ["python", "snippets", "aiohttp", "aiogram", "signals", "logging"]
+dependencies = []
 
 [tool.setuptools]
 packages = ["purse"]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
+
+[project.urls]
+Repository = "https://github.com/andrei-samofalov/purse"
+Issues = "https://github.com/andrei-samofalov/purse/issues"
 
 [project.optional-dependencies]
 aiogram = [
     "aiogram>=3.17.0",
 ]
-aiohttp = [
-    "aiohttp",
+django = [
+    "django>=5.1.5",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.4",
     "aiogram>=3.17.0",
+    "django>=5.1.5",
     "httpx>=0.28.1",
     "requests>=2.32.3",
+    "ruff>=0.9.4",
     "pytest-asyncio>=0.25.3",
     "pytest>=8.3.4",
     "coverage>=7.6.10",
-    "django>=5.1.5",
+    "isort>=6.0.0",
 ]
+
+[tool.ruff.lint]
+ignore = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+
+[tool.isort]
+line_length = 88
+include_trailing_comma = true
+multi_line_output = 3
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "session"

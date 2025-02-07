@@ -1,5 +1,5 @@
 from contextlib import suppress
-from typing import TypeVar, Literal
+from typing import Literal, TypeVar
 
 from aiogram.enums import ContentType
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError

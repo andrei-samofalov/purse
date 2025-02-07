@@ -2,7 +2,7 @@ import asyncio
 import inspect
 import signal
 from collections.abc import Callable
-from typing import Optional, TypeAlias, Awaitable
+from typing import Awaitable, Optional, TypeAlias
 
 from purse.logging import logger_factory
 
@@ -35,7 +35,7 @@ def create_listeners(handle_shutdown: HandleShutdownCallable):
 
     for sig in (signal.SIGINT, signal.SIGTERM):
         if inspect.iscoroutinefunction(handle_shutdown):
-            cb = lambda *_: asyncio.create_task(
+            cb = lambda *_: asyncio.create_task(  # noqa: E731
                 handle_shutdown(sig, kill_event)
             )
             args = tuple()

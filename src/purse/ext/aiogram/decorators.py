@@ -1,8 +1,11 @@
 import functools
-from typing import Callable, Awaitable, Optional
-from typing import ParamSpec, TypeVar
+from typing import Awaitable, Callable, Optional, ParamSpec, TypeVar
 
-from aiogram.exceptions import TelegramBadRequest, TelegramNotFound, TelegramForbiddenError
+from aiogram.exceptions import (
+    TelegramBadRequest,
+    TelegramForbiddenError,
+    TelegramNotFound,
+)
 
 from purse.logging import default_logger as logger
 

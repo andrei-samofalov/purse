@@ -15,13 +15,11 @@ async def main():
             service_name='purse'
         ),
     )
-    try:
-        1 / 0
-    except ZeroDivisionError as e:
-        logger.exception(e)
 
     kill_event = signals.setup()
     logger.info('app is up')
+
+    logger.error('error!')
 
     await kill_event.wait()
     logger.info('app is down')

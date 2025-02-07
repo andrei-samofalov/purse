@@ -4,7 +4,12 @@ import typing as t
 from types import MappingProxyType
 
 from purse import func
-from purse.interfaces.protocols import QueryRepoProtocol, ModelType, PKType, DoesNotExistProtocol
+from purse.interfaces.protocols import (
+    DoesNotExistProtocol,
+    ModelType,
+    PKType,
+    QueryRepoProtocol,
+)
 
 FilterMap = t.Mapping[str, t.Callable[[t.Any, t.Any], bool]]
 

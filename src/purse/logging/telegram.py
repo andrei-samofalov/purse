@@ -8,14 +8,13 @@ import time
 import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import timedelta, datetime
-from typing import Generator, Optional, Any, Protocol
+from datetime import datetime, timedelta
+from typing import Any, Generator, Optional, Protocol
 
 from purse import datetime as dt
 from purse._meta import __project__
 from purse.http.clients import get_default_http_client
 from purse.signals import prepare_shutdown
-
 
 ChatId = int | str
 

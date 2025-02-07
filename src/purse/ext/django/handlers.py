@@ -2,15 +2,12 @@ import sys
 
 from django.core import signals
 from django.core.exceptions import RequestDataTooBig
-from django.core.handlers.asgi import (
-    ASGIRequest as DjangoASGIRequest,
-    ASGIHandler as DjangoASGIHandler,
-)
-from django.core.handlers.wsgi import (
-    WSGIRequest as DjangoWSGIRequest,
-    WSGIHandler as DjangoWSGIHandler, get_script_name,
-)
-from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.core.handlers.asgi import ASGIHandler as DjangoASGIHandler
+from django.core.handlers.asgi import ASGIRequest as DjangoASGIRequest
+from django.core.handlers.wsgi import WSGIHandler as DjangoWSGIHandler
+from django.core.handlers.wsgi import WSGIRequest as DjangoWSGIRequest
+from django.core.handlers.wsgi import get_script_name
+from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.urls.base import set_script_prefix
 
 from purse.logging import logger_factory

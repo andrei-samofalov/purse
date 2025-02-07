@@ -9,8 +9,7 @@ from typing import Any, Awaitable, Dict, List, Optional
 from aiogram import Bot
 from aiogram.dispatcher.dispatcher import DEFAULT_BACKOFF_CONFIG, Dispatcher
 from aiogram.exceptions import TelegramAPIError
-from aiogram.types import BotCommand
-from aiogram.types import User
+from aiogram.types import BotCommand, User
 from aiogram.utils.backoff import BackoffConfig
 
 from purse import func

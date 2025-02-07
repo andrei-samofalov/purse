@@ -1,13 +1,18 @@
 import logging
 from dataclasses import dataclass
 from logging.config import dictConfig
-from typing import Optional, Iterable
+from typing import Iterable, Optional
 
 from purse.logging._internal import logger_factory
-from purse.logging.logconfig import TelegramHandlerProvider, make_config_dict
+from purse.logging.logconfig import make_config_dict
 from purse.logging.telegram import (
+    BotProtocol,
+    ChatId,
+    SimpleLoggingBot,
+    StopEvent,
+    TelegramHandler,
     TelegramLogger,
-    TelegramHandler, SimpleLoggingBot, configure_bot_exception_hook, ChatId, StopEvent, BotProtocol
+    configure_bot_exception_hook,
 )
 
 __all__ = [
