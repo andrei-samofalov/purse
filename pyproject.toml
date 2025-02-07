@@ -4,7 +4,7 @@ version = "1.0.23"
 description = "Snippets and utils for python projects"
 requires-python = ">=3.11"
 readme = "readme.md"
-license-files = ['LICENSE']
+license = { file = 'LICENSE' }
 authors = [
     { "name" = "Andrei Samofalov", "email" = "andrei.e.samofalov@gmail.com" }
 ]
