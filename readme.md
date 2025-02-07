@@ -4,57 +4,52 @@
 asynchronous and synchronous Python projects. Whether you're building bots, web applications,
 or other tools, this library provides ready-to-use code modules to speed up development.
 
-## Features
+## Framework Extensions
 
-- **Dataclasses Utilities**  
-  Enhance your work with Python dataclasses with extra helpers and shortcuts.
+- **aiogram**: Bots and dp bootstrap, router-makers, useful decorators and utilities for Telegram bots.
+- **aiohttp**: Simplified app creation and server utilities.
+- **django**: ASGI/WSGI handlers, repository patterns, and more for Django projects.
 
-- **Datetime Helpers**  
-  Tools for common datetime operations.
+## Logging
 
-- **HTTP Clients**  
-  Built-in support for multiple HTTP clients including `httpx`, `requests`, and builtin http module.
+Custom logging configurations and integrations (including Telegram-based logging).
 
-- **Framework Extensions**
-    - **aiogram**: Bootstrap modules, decorators, routers, and utilities for Telegram bots.
-    - **aiohttp**: Simplified app creation and server utilities.
-    - **django**: ASGI/WSGI handlers, repository patterns, and more for Django projects.
+```python
+from configparser import ConfigParser
 
-- **Logging**  
-  Custom logging configurations and integrations (including Telegram-based logging).
-    ```python
-    from configparser import ConfigParser
+import purse.logging
 
-    import purse.logging
-  
-    config = ConfigParser()
-    config.read('config.ini')
-    bot_config = config['bot']
-    
-    tg_logger = purse.logging.setup(
-      telegram_setup=purse.logging.TelegramSetup(
+config = ConfigParser()
+config.read('config.ini')
+bot_config = config['bot']
+
+tg_logger = purse.logging.setup(
+    telegram_setup=purse.logging.TelegramSetup(
         bot=purse.logging.SimpleLoggingBot(token=bot_config.get('token')),
         log_chat_id=bot_config.get('log_chat_id'),
         send_delay=bot_config.getint('send_delay'),
         logger_level=bot_config.getint('logger_level'),
         service_name=bot_config.get('service_name'),
-      ),
-    )
-  
-    tg_logger.debug("dev message", to_dev=True)  # prints to stderr and ends message to telegram
-  
-    try:
-        raise Exception("some exception")
-    except Exception as exc:
-        tg_logger.exception(exc)  # prints traceback to stderr and ends message to telegram
-  ```
+    ),
+)
 
-- **Interfaces and Repositories**  
-  Protocol definitions and in-memory repository implementations for fast prototyping and testing.
+tg_logger.debug("dev message", to_dev=True)  # prints to stderr and sends message to telegram
 
-- **JSON encoders and decoders**  
-  Utility functions and classes to simplify JSON handling (mostly decoding and encoding Decimals, 
-  UUIDs, dates, and other specific types).
+try:
+    raise Exception("some exception")
+except Exception as exc:
+    tg_logger.exception(exc)  # prints traceback to stderr and sends message to telegram
+```
+
+## Interfaces and Repositories
+
+Protocol definitions and in-memory repository implementations for fast prototyping and testing.
+
+## JSON encoders and decoders
+
+Utility functions and classes to simplify JSON handling (mostly decoding and encoding Decimals,
+UUIDs, dates, and other specific types).
+
 ```python
 from purse import json as purse_json
 from decimal import Decimal
@@ -64,34 +59,33 @@ purse_json.loads('{"val": "100"}')  # {'val': Decimal('100')}
 
 ```
 
-- **Asyncio signals handling**
-  Easy loop signal setup for SIGINT and SIGTERM. 
-  Use predefined `purse.signals.prepare_shutdown` (internal flag of this event would be set to True 
-  when one of signals received) and `purse.signals.shutdown_complete` events in your code for more 
-  compatability.
-  ```python 
-  import purse
-  import asyncio 
-  
-  async def main():
-    kill_event = purse.signals.setup()
-    ... # some startup logic
-    
-    await kill_event.wait()
-    ... # some shutdown logic
-    await purse.signals.shutdown_complete.wait()
-    
-  
-  if __name__ == '__main__':
-      asyncio.run(main())
-  ```
-  You can pass your custom function to `purse.signals.setup` for handling signals. This function 
-  must have exact two arguments: `signal.Signals` and `asyncio.Event` (internal flag of this event 
-  you must set to True due the function execution).
+## Asyncio signals handling
 
+Easy loop signal setup for SIGINT and SIGTERM.
+Use predefined `purse.signals.prepare_shutdown` (internal flag of this event would be set to True
+when one of signals received) and `purse.signals.shutdown_complete` events in your code for more
+compatability.
 
-- **Additional Utilities**  
-  System-level helpers, type utilities, and more.
+```python 
+import purse
+import asyncio 
+
+async def main():
+  kill_event = purse.signals.setup()
+  ... # some startup logic
+  
+  await kill_event.wait()
+  ... # some shutdown logic
+  await purse.signals.shutdown_complete.wait()
+  
+
+if __name__ == '__main__':
+    asyncio.run(main())
+```
+
+You can pass your custom function to `purse.signals.setup` for handling signals. This function
+must have exact two arguments: `signal.Signals` and `asyncio.Event` (internal flag of this event
+you must set to True due the function execution).
 
 ## Installation
 
