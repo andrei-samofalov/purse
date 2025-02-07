@@ -6,12 +6,13 @@ from purse.logging import telegram as tg_base
 
 TelegramHandlerProvider = Callable[[], tg_base.TelegramHandler]
 
+DEFAULT_FORMAT = '[%(asctime)s] %(levelname)-5s | %(name)s:%(lineno)s - %(message)s'
 DEFAULT_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'console': {
-            'format': '[%(asctime)s] %(levelname)-5s | %(name)s:%(lineno)s - %(message)s'
+            'format': DEFAULT_FORMAT
         },
     },
     'handlers': {

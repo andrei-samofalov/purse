@@ -22,6 +22,21 @@ or other tools, this library provides ready-to-use code modules to speed up deve
 
 - **Logging**  
   Custom logging configurations and integrations (including Telegram-based logging).
+  ```python
+  config = ConfigParser()
+  config.read('config.ini')
+  bot_config = config['bot']
+    
+  purse.logging.setup(
+    telegram_setup=TelegramSetup(
+        bot=logging.SimpleLoggingBot(token=bot_config.get('token')),
+        log_chat_id=bot_config.get('log_chat_id'),
+        send_delay=bot_config.getint('send_delay'),
+        logger_level=bot_config.getint('logger_level'),
+        service_name=bot_config.get('service_name'),
+    ),
+  )
+  ```
 
 - **Interfaces and Repositories**  
   Protocol definitions and in-memory repository implementations for fast prototyping.

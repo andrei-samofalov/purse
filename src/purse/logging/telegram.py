@@ -100,12 +100,21 @@ class TelegramLogger(logging.Logger):
         self._dev_chat_id = dev_chat_id
 
     def exception(self, msg, *args, to_dev=False, **kwargs):
-        super().exception(msg, *args, **kwargs)
-        if to_dev:
-            self.to_dev(self._format_error(msg, *args))
+        self._make_log(msg, *args, to_dev=to_dev, **kwargs)
 
     def error(self, msg, *args, to_dev=False, **kwargs):
-        super().error(msg, *args, **kwargs)
+        self._make_log(msg, *args, to_dev=to_dev, **kwargs)
+
+    def info(self, msg, *args, to_dev=False, extra=None):
+        self._make_log(msg, *args, to_dev=to_dev, extra=extra)
+
+    def debug(self, msg, *args, to_dev=False, extra=None):
+        self._make_log(msg, *args, to_dev=to_dev, extra=extra)
+
+    def _make_log(self, msg, *args, to_dev=False, **kwargs):
+        kwargs['stacklevel'] = 3
+        level = logging.currentframe().f_back.f_code.co_name
+        getattr(super(), level)(msg, *args, **kwargs)
         if to_dev:
             self.to_dev(self._format_error(msg, *args))
 
@@ -122,6 +131,7 @@ class TelegramLogger(logging.Logger):
 
     def to_tg(self, message: str, chat_id: Optional[ChatId] = None):
         """Send message to telegram."""
+        assert self.tg_handler
         self.tg_handler.add_to_queue(
             task=BotTask(message=message, chat_id=chat_id, format_python=False)
         )
@@ -144,7 +154,6 @@ class TelegramHandler(logging.StreamHandler):
         bot: BotProtocol,
         log_chat_id: ChatId,
         send_delay: float,
-        parent_logger: Optional[TelegramLogger] = None,
         parse_mode: str = 'MARKDOWN',
         service_name: Optional[str] = None,
         stop_event: Optional[StopEvent] = None,
@@ -155,7 +164,6 @@ class TelegramHandler(logging.StreamHandler):
         self._send_delay = send_delay
         self._service_text_prefix = f"Service {service_name.upper()}" if service_name else ''
         self._default_parse_mode = parse_mode.upper()
-        self._parent_logger = parent_logger
 
         self._queue: queue.Queue[BotTask] = queue.Queue()
         self._stop_event = stop_event or prepare_shutdown
@@ -171,6 +179,8 @@ class TelegramHandler(logging.StreamHandler):
 
     def add_to_queue(self, task: BotTask):
         """Add message to queue."""
+        if not self._started:
+            self.start()
         self._queue.put(task)
 
     def _queue_worker(self):
