@@ -1,18 +1,24 @@
 import asyncio
+from configparser import ConfigParser
 
 from purse import logging
 from purse import signals
 from purse.logging import TelegramSetup
 
-logger = logging.default_logger
-
 
 async def main():
+    config = ConfigParser()
+    config.read('config.ini')
+    bot_config = config['bot']
+
+    logger = logging.default_logger
     logging.setup(
         telegram_setup=TelegramSetup(
-            bot=logging.SimpleLoggingBot(token='6959549185:AAEFx81Jsr6sZ8mE3llriaFLgnrlV372Tmo'),
-            log_chat_id=436350071,
-            service_name='purse'
+            bot=logging.SimpleLoggingBot(token=bot_config.get('token')),
+            log_chat_id=bot_config.get('log_chat_id'),
+            send_delay=bot_config.getint('send_delay'),
+            logger_level=bot_config.getint('logger_level'),
+            service_name=bot_config.get('service_name'),
         ),
     )
 

@@ -1,4 +1,5 @@
 import abc
+import re
 from typing import Optional
 
 
@@ -6,7 +7,7 @@ class BaseClient(metaclass=abc.ABCMeta):
     """Abstract base class for clients."""
 
     def __init__(self, host: str, port: int = 80, use_ssl=True):
-        self.host = host.removeprefix('https://').removeprefix('http://')
+        self.host = re.sub(r'^https?://', '', host)
         self.port = port if not use_ssl else 443
         self.use_ssl = use_ssl
 

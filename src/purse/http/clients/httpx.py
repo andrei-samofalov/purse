@@ -23,6 +23,6 @@ class HTTPXClient(BaseClient):
 
         with httpx.Client(base_url=self._base_url, timeout=10) as client:
             response = client.request(method, url, json=data, headers=headers, params=params)
-            if response.status_code != httpx.codes.OK:
-                logger.error(response.text)
+            if response.status_code >= httpx.codes.BAD_REQUEST:
+                response.raise_for_status()
             return response

@@ -1,4 +1,3 @@
-import inspect
 import io
 import logging
 import queue
@@ -12,7 +11,6 @@ from datetime import datetime, timedelta
 from typing import Any, Generator, Optional, Protocol
 
 from purse import datetime as dt
-from purse._meta import __project__
 from purse.http.clients import get_default_http_client
 from purse.signals import prepare_shutdown
 
@@ -166,25 +164,10 @@ class TelegramHandler(logging.StreamHandler):
         self.setLevel(logging.ERROR)
         self.createLock()
 
-
-    def emit(self, record: logging.LogRecord, copy_to_telegram: bool = True):
+    def emit(self, record: logging.LogRecord):
         """Send the specified logging record to the telegram chat."""
-        if copy_to_telegram:
-            log_entry = self.format(record)
-            self.add_to_queue(task=BotTask(message=log_entry))
-
-    def _log(self, message: str | Exception, level=logging.DEBUG, copy_to_telegram: bool = False):
-        if self.level <= logging.DEBUG or self._parent_logger and self._parent_logger.level <= level:
-            record = logging.LogRecord(
-                name=f"{__project__}.telegram",
-                level=level,
-                pathname=__file__,
-                lineno=inspect.currentframe().f_back.f_lineno,
-                msg=message,
-                args=None,
-                exc_info=None,
-            )
-            self.emit(record, copy_to_telegram=copy_to_telegram)
+        log_entry = self.format(record)
+        self.add_to_queue(task=BotTask(message=log_entry))
 
     def add_to_queue(self, task: BotTask):
         """Add message to queue."""
