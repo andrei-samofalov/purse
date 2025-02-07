@@ -208,11 +208,8 @@ class TelegramHandler(logging.StreamHandler):
                     self._last_sent = dt.utcnow()
 
             except Exception as e:
-                logging.log(logging.ERROR, f"Failed to send message: {e}")
-
-    def set_parent_logger(self, logger: TelegramLogger):
-        """Set parent Telegram logger."""
-        self._parent_logger = logger
+                # logging.WARNING used because of recursion
+                logging.log(logging.WARNING, f"Failed to send message: {e}")
 
     def start(self):
         """Start working queue"""
