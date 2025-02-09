@@ -39,7 +39,18 @@ try:
     raise Exception("some exception")
 except Exception as exc:
     tg_logger.exception(exc)  # prints traceback to stderr and sends message to telegram
+
+    
+from logging import getLogger
+
+your_app_logger = getLogger("app")
+your_app_logger.error('error in runtime')  # prints to stderr and sends message to telegram
+
 ```
+You don't have to use `purse.logging.setup` function return object (`tg_logger` in example above) 
+directly for error/exception telegram logging unless you want to send messages 
+by `TelegramLogger.to_tg(...)` and `TelegramLogger.to_dev(...)` methods.
+
 
 ## Interfaces and Repositories
 
