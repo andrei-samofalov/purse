@@ -4,6 +4,8 @@ import uuid
 
 PKType = t.TypeVar("PKType", int, uuid.UUID, tuple)
 ModelType = t.TypeVar("ModelType")
+OrderingType = set[str, ...]
+empty_set = frozenset()
 
 
 @t.runtime_checkable
@@ -24,15 +26,19 @@ class CommitRepoProtocol(t.Generic[ModelType], metaclass=abc.ABCMeta):
     #     """Update object in repository"""
 
 
-class QueryRepoProtocol(t.Generic[ModelType, PKType], metaclass=abc.ABCMeta):
+class QueryRepoProtocol(t.Generic[ModelType], metaclass=abc.ABCMeta):
     """QueryRepo interface"""
+
+    async def exists(self, **filters) -> bool:
+        """Return True if objects with given filters exist."""
+        return len(await self.filter(**filters)) > 0
 
     @abc.abstractmethod
     async def get_one(self, object_pk: PKType) -> ModelType:
         """Return object by primary key"""
 
     @abc.abstractmethod
-    async def get_all(self):
+    async def get_all(self, ordering: OrderingType = empty_set) -> t.Collection[ModelType]:
         """Return all objects in repository"""
 
     @abc.abstractmethod
@@ -40,7 +46,7 @@ class QueryRepoProtocol(t.Generic[ModelType, PKType], metaclass=abc.ABCMeta):
         """Return object by pk or None"""
 
     @abc.abstractmethod
-    async def filter(self, **filters: t.Any) -> t.Iterable[ModelType]:
+    async def filter(self, ordering: OrderingType = empty_set, **filters: t.Any) -> t.Collection[ModelType]:
         """Return an iterable of objects filtered by filters"""
 
     @abc.abstractmethod

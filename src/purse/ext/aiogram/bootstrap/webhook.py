@@ -15,7 +15,7 @@ from purse.logging import logger_factory
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
 SuccessCallable = Callable[[Bot, User], Any | Awaitable[Any]]
 
-_logger = logger_factory('ext.aiogram', include_project=True)
+_logger = logger_factory('ext.aiogram.webhook', include_project=True)
 
 
 def _default_on_failure(bot: Bot, error: TelegramAPIError):

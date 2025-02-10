@@ -7,7 +7,9 @@ from aiogram.exceptions import (
     TelegramNotFound,
 )
 
-from purse.logging import default_logger as logger
+from purse import logging
+
+logger = logging.logger_factory('ext.aiogram.decorators', include_project=True)
 
 P = ParamSpec("P")
 T = TypeVar("T")

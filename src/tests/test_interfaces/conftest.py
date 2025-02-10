@@ -5,7 +5,7 @@ import pytest
 
 from purse.dataclasses import DataClassProtocol
 from purse.interfaces.protocols import PKType
-from purse.interfaces.repo.memory import MemoryQueryRepo, DoesNotExist
+from purse.interfaces.repo.memory import DoesNotExist, MemoryQueryRepo
 
 
 @dataclasses.dataclass

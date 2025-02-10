@@ -6,10 +6,10 @@ from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 from aiogram.types import CallbackQuery, Message
 from aiogram.utils.formatting import Text
 
-from purse.logging import logger_factory
+from purse import logging
 from purse.typing import LoggerProtocol
 
-_logger = logger_factory('ext.aiogram.bootstrap', include_project=True)
+_logger = logging.logger_factory('ext.aiogram.utils', include_project=True)
 
 TelegramMessageEvent = TypeVar("TelegramMessageEvent", CallbackQuery, Message)
 FormattingMap = Literal['as_html', 'as_markdown', 'as_pretty_string']

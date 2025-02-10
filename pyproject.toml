@@ -7,7 +7,7 @@ packages = ["src/purse"]
 
 [project]
 name = "python-purse"
-version = "1.0.29"
+version = "1.0.30"
 description = "Snippets and utils for python projects"
 requires-python = ">=3.11"
 readme = "readme.md"
@@ -45,12 +45,11 @@ dev = [
 ]
 
 [tool.ruff.lint]
-ignore = ["E402"]
+ignore = ["E402", "F401", "E731"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-
 
 [tool.isort]
 line_length = 88

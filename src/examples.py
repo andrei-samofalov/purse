@@ -23,7 +23,7 @@ async def main():
 
     kill_event = purse.signals.setup()
     logger.info('app is up')
-    logger.debug(f'hello!', to_dev=True)
+    logger.debug('hello!', to_dev=True)
     logger.to_dev('dev message')  # goes only to telegram
 
     try:

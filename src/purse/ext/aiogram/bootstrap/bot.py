@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import warnings
 from typing import Optional, Reversible
 
 from aiogram import BaseMiddleware, Bot, Dispatcher, Router
@@ -21,11 +22,27 @@ def get_dispatcher(
     name: Optional[str] = None,
     storage: Optional[BaseStorage] = None,
     middlewares: Reversible[type[BaseMiddleware]] = _empty_iterable,
+    update_middlewares: Reversible[type[BaseMiddleware]] = _empty_iterable,
+    message_middlewares: Reversible[type[BaseMiddleware]] = _empty_iterable,
+    query_middlewares: Reversible[type[BaseMiddleware]] = _empty_iterable,
 ) -> Dispatcher:
     """Setup and return aiogram.Dispatcher"""
+    if middlewares:
+        warnings.warn(
+            "middlewares parameter is deprecated, use update_middlewares instead",
+            DeprecationWarning,
+        )
+        update_middlewares = middlewares
+
     dp = Dispatcher(storage=storage, name=name)
-    for middleware in reversed(middlewares):
+    for middleware in reversed(update_middlewares):
         dp.update.middleware(middleware())
+
+    for middleware in message_middlewares:
+        dp.message.middleware(middleware())
+
+    for middleware in query_middlewares:
+        dp.callback_query.middleware(middleware())
 
     setup_routers(dp, *routes)
 

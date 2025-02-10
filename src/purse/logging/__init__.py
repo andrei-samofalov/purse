@@ -5,7 +5,7 @@ from logging.config import dictConfig
 from typing import Iterable, Optional
 
 from purse.logging._internal import logger_factory
-from purse.logging.logconfig import make_config_dict, DEFAULT_FORMAT
+from purse.logging.logconfig import DEFAULT_FORMAT, make_config_dict
 from purse.logging.telegram import (
     BotProtocol,
     ChatId,

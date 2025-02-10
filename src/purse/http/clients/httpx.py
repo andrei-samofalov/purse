@@ -1,6 +1,5 @@
 from purse import imports
 from purse.http.clients.base import BaseClient
-from purse.logging import default_logger as logger
 
 imports.ensure_installed("httpx")
 
