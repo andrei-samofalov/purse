@@ -3,6 +3,7 @@ import contextlib
 import warnings
 from typing import Optional, Reversible
 
+import frozenlist
 from aiogram import BaseMiddleware, Bot, Dispatcher, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -14,7 +15,7 @@ from purse.logging import logger_factory
 from purse.signals import prepare_shutdown, shutdown_complete
 
 logger = logger_factory('ext.aiogram.bot', include_project=True)
-_empty_iterable = frozenset()
+_empty_iterable = frozenlist.FrozenList()
 
 
 def get_dispatcher(
