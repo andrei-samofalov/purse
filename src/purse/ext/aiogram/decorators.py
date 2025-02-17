@@ -7,9 +7,9 @@ from aiogram.exceptions import (
     TelegramNotFound,
 )
 
-from purse import logging
+import purse.logging
 
-logger = logging.logger_factory('ext.aiogram.decorators', include_project=True)
+logger = purse.logging.logger_factory('ext.aiogram.decorators', include_project=True)
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -25,8 +25,8 @@ def tg_pass(func: ToDecorate) -> Decorated:
     async def _wrapper(*args: P.args, **kwargs: P.kwargs) -> Optional[T]:
         try:
             result = await func(*args, **kwargs)
-        except (TelegramBadRequest, TelegramNotFound, TelegramForbiddenError) as ex:
-            return logger.error(ex)
+        except (TelegramBadRequest, TelegramNotFound, TelegramForbiddenError, Exception) as ex:
+            return logger.error(f"{func.__module__}.{func.__name__}: {ex}")
 
         return result
 

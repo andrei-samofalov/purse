@@ -187,8 +187,7 @@ class TelegramHandler(logging.StreamHandler):
         while not self._stop_event.is_set():
             try:
                 if (elapsed := dt.utcnow() - self._last_sent) < timedelta(self._send_delay):
-                    sleep_for = self._send_delay - elapsed.seconds
-                    time.sleep(sleep_for)
+                    time.sleep(elapsed.seconds)
 
                 task = self._queue.get()
 
