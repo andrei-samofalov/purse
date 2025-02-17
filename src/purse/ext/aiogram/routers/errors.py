@@ -12,7 +12,7 @@ from aiogram.utils.i18n import gettext as _
 from aiogram.utils.markdown import hbold, hcode
 
 from purse import func
-from purse.logging.telegram import format_exception
+from purse.logs.telegram import format_exception
 
 CodeFormatCallable = Callable[[Any], str]
 ContextData = dict[str, Any]

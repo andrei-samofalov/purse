@@ -10,7 +10,7 @@ from django.core.handlers.wsgi import get_script_name
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.urls.base import set_script_prefix
 
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 
 logger = logger_factory("ext.django", include_project=True)
 

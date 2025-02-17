@@ -11,7 +11,7 @@ from aiogram.client.session.base import BaseSession
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.base import BaseStorage
 
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 from purse.signals import prepare_shutdown, shutdown_complete
 
 logger = logger_factory('ext.aiogram.bot', include_project=True)

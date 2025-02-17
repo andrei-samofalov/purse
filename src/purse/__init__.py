@@ -1,1 +1,1 @@
-from . import logging, signals
+from . import logs, signals

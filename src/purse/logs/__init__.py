@@ -1,12 +1,12 @@
 import functools
 import logging
 from dataclasses import dataclass
-from logging.config import dictConfig
+import logging.config as _logging_config
 from typing import Iterable, Optional
 
-from purse.logging._internal import logger_factory
-from purse.logging.logconfig import DEFAULT_FORMAT, make_config_dict
-from purse.logging.telegram import (
+from purse.logs._internal import logger_factory
+from purse.logs.logconfig import DEFAULT_FORMAT, make_config_dict
+from purse.logs.telegram import (
     BotProtocol,
     ChatId,
     SimpleLoggingBot,
@@ -150,5 +150,5 @@ def setup(
 
         configure_bot_exception_hook(tg_logger)
 
-    dictConfig(config=config_dict)
+    _logging_config.dictConfig(config=config_dict)
     return tg_logger

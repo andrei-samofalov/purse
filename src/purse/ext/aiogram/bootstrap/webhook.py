@@ -10,7 +10,7 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiohttp import web
 
 from purse import func
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 
 FailureCallable = Callable[[Bot, TelegramAPIError], Any | Awaitable[Any]]
 SuccessCallable = Callable[[Bot, User], Any | Awaitable[Any]]

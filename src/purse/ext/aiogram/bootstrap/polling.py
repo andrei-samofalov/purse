@@ -13,7 +13,7 @@ from aiogram.types import BotCommand, User
 from aiogram.utils.backoff import BackoffConfig
 
 from purse import func
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 
 default_logger = logger_factory('ext.aiogram.polling', include_project=True)
 

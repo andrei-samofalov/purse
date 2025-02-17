@@ -1,6 +1,6 @@
 from typing import Optional
 
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 
 try:
     from aiohttp import web

@@ -17,7 +17,7 @@ Custom logging configurations and integrations (including Telegram-based logging
 ```python
 from configparser import ConfigParser
 
-import purse.logging
+import purse.logs
 
 config = ConfigParser()
 config.read('config.ini')
@@ -40,7 +40,6 @@ try:
 except Exception as exc:
     tg_logger.exception(exc)  # prints traceback to stderr and sends message to telegram
 
-    
 from logging import getLogger
 
 your_app_logger = getLogger("app")

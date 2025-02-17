@@ -5,7 +5,7 @@ import warnings
 from collections.abc import Coroutine, Hashable
 from typing import Optional
 
-from purse.logging import default_logger
+from purse.logs import default_logger
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 

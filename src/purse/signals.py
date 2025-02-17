@@ -4,7 +4,7 @@ import signal
 from collections.abc import Callable
 from typing import Awaitable, Optional, TypeAlias
 
-from purse.logging import logger_factory
+from purse.logs import logger_factory
 
 prepare_shutdown = asyncio.Event()
 """Use this event in your code."""
