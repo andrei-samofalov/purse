@@ -7,7 +7,7 @@ packages = ["src/purse"]
 
 [project]
 name = "python-purse"
-version = "1.1.0"
+version = "1.1.1"
 description = "Snippets and utils for python projects"
 requires-python = ">=3.11"
 readme = "readme.md"
