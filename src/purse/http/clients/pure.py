@@ -1,9 +1,50 @@
 import http.client
+from http.client import HTTPException
 from typing import Optional
 from urllib.parse import urlencode
 
 import purse.json
 from purse.http.clients.base import BaseClient
+
+hmap = {
+    ""
+}
+
+
+class Response:
+    """Typed response"""
+
+    def __init__(self, response: http.client.HTTPResponse):
+        self._response = response
+
+    status = property(lambda self: self._response.status)
+    headers = property(lambda self: self._response.headers)
+    url = property(lambda self: self._response.url)
+
+    @property
+    def content_type(self):
+        """Return the content type of the response"""
+        return self._response.getheader("content-type")
+
+    @property
+    def data(self):
+        """Return appropriate data of a response"""
+        payload = self._response.read().decode("utf-8")
+        if not self._response.getheader('content-length'):
+            return payload
+        if self.content_type == "application/json":
+            return purse.json.loads(payload)
+        return payload
+
+
+class StatusCodeException(HTTPException):
+    """Status code exception"""
+
+    def __init__(self, *, response: "Response"):
+        self.response = response
+
+    def __str__(self):
+        return f'request to {self.response.url} failed with status code {self.response.status}'
 
 
 class SimpleHttpClient(BaseClient):
@@ -28,7 +69,8 @@ class SimpleHttpClient(BaseClient):
 
         connection.request(method, url, body=data, headers=headers)
         response = connection.getresponse()
-        return self._handle_response(response)
+        response.url = url
+        return self._handle_response(Response(response))
 
     def get(self, url, params: Optional[dict] = None, headers: Optional[dict] = None):
         """Send a GET request to the specified path."""
@@ -41,8 +83,8 @@ class SimpleHttpClient(BaseClient):
         return self.request("POST", path, data=data, headers=headers)
 
     @classmethod
-    def _handle_response(cls, response: http.client.HTTPResponse) -> str:
+    def _handle_response(cls, response: Response) -> str:
         """Handle the HTTP response."""
         if response.status >= 400:
-            raise Exception(f"Request failed with status {response.status}")
-        return response.read().decode()
+            raise StatusCodeException(response=response)
+        return response.data

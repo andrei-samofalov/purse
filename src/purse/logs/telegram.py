@@ -12,6 +12,7 @@ from typing import Any, Generator, Optional, Protocol
 
 from purse import datetime as dt
 from purse.http.clients import get_default_http_client
+from purse.http.clients.pure import StatusCodeException
 from purse.signals import prepare_shutdown
 
 ChatId = int | str
@@ -74,14 +75,26 @@ class SimpleLoggingBot(BotProtocol):
 
     def send_message(self, chat_id: ChatId, text: str, **kwargs) -> Any:
         """Send a message"""
-        try:
-            return self._transport.post(
-                f"{self._path}/sendMessage",
-                data={"text": text, "chat_id": chat_id, **kwargs},
-                headers={"Content-Type": "application/json"},
-            )
-        except Exception as e:
-            print(f"Failed to send message to {chat_id}: {e}\n{format_exception(*sys.exc_info())}")
+        retires = kwargs.get("retires", 2)
+        while retires:
+            try:
+                return self._transport.post(
+                    f"{self._path}/sendMessage",
+                    data={"text": text, "chat_id": chat_id, **kwargs},
+                    headers={"Content-Type": "application/json"},
+                )
+            except StatusCodeException as ex:
+                if ex.response.status == 429:
+                    time.sleep(ex.response.data.get("retry_after", 1))
+                    continue
+                print(f"Failed to send message to {chat_id}: {ex.response.data}")
+
+            except Exception as e:
+                print(f"Failed to send message to {chat_id}: "
+                      f"{e}\n{format_exception(*sys.exc_info())}")
+
+            finally:
+                retires -= 1
 
 
 class TelegramLogger(logging.Logger):
